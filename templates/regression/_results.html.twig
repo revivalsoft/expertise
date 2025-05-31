@@ -1,0 +1,21 @@
+{% if estimations %}
+	<div class="alert alert-primary">
+		<strong>Estimation linéaire :</strong>
+		{{ estimations['linéaire']|number_format(0, ',', ' ') }}
+		€<br>
+		<strong>Estimation logarithmique :</strong>
+		{{ estimations['logarithmique']|number_format(0, ',', ' ') }}
+		€<br>
+		<strong>Estimation puissance :</strong>
+		{{ estimations['puissance']|number_format(0, ',', ' ') }}
+		€
+	</div>
+{% else %}
+	<div class="alert alert-warning">
+		Impossible de calculer une estimation avec moins de 2 points valides.
+	</div>
+{% endif %}
+
+<script type="application/json" id="surface-data">{{ filteredSurface|json_encode }}</script>
+<script type="application/json" id="prix-data">{{ filteredPrix|json_encode }}</script>
+<canvas id="resultChart" class="mt-4 w-100"></canvas>

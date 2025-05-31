@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Guide professionnel d'estimation de terrain
+{% endblock %}
+
+{% block body %}
+
+	<div class="container my-5">
+		<div class="card shadow">
+			<div class="card-body">
+				<h1 class="mb-4 text-primary">Guide pour l'estimation de la valeur d'un terrain</h1>
+
+
+				<div class="mb-5">
+					<h2>1. Introduction</h2>
+					<p>Ce guide vise à doter les professionnels de l'immobilier et de l'aménagement d'une base solide pour estimer la valeur d'un terrain à partir de données observées. Il combine théorie économique, modélisation statistique, et outils pratiques exploitables dans des environnements logiciels.</p>
+				</div>
+
+				<div class="mb-5">
+					<h2>2. Données nécessaires</h2>
+					<ul>
+						<li>Surface en m²</li>
+						<li>Prix total</li>
+						<li>Emplacement ou zone géographique</li>
+						<li>Prix au m² (dérivé)</li>
+						<li>Date de la transaction (facultatif mais utile pour ajuster l'inflation)</li>
+					</ul>
+					<p>Format recommandé : fichier CSV ou table SQL structurée.</p>
+				</div>
+
+				<div class="mb-5">
+					<h2>3. Nettoyage des données</h2>
+
+
+					<p>On applique l’analyse des
+						<strong>outliers</strong>
+						via la méthode de l’intervalle interquartile (IQR) :</p>
+					<pre>Q1 = premier quartile (25ᵉ percentile)
+Q2 = deuxième quartile (médiane, 50ᵉ percentile)
+Q3 = troisième quartile (75ᵉ percentile)
+IQR = Q3 - Q1
+Seuil bas = Q1 - 1.5 × IQR
+Seuil haut = Q3 + 1.5 × IQR</pre>
+					<p>
+						<strong>Remarque :</strong>
+						bien que Q2 (la médiane) ne soit pas utilisé dans les calculs d’outliers, il est utile pour évaluer la tendance centrale et comprendre la distribution des données.</p>
+					<p>Les observations en dehors de ces seuils sont considérées comme suspectes.</p>
+				</div>
+
+
+				<div class="mb-5">
+					<h2>4. Méthode 1 : Régression linéaire</h2>
+					<p>Formule :</p>
+					<pre>y = a × x + b</pre>
+					<ul>
+						<li>
+							<code>x</code>
+							= surface</li>
+						<li>
+							<code>y</code>
+							= prix total</li>
+						<li>
+							<code>a</code>
+							= pente = cov(x, y) / var(x)</li>
+						<li>
+							<code>b</code>
+							= ordonnée à l’origine = moyenne(y) - a × moyenne(x)</li>
+					</ul>
+				</div>
+
+				<div class="mb-5">
+					<h2>5. Méthode 2 : Régression logarithmique</h2>
+					<p>Formule :</p>
+					<pre>y = a × ln(x) + b</pre>
+					<p>Permet de modéliser un prix qui progresse moins vite pour les grandes surfaces.</p>
+				</div>
+
+				<div class="mb-5">
+					<h2>6. Méthode 3 : Régression puissance</h2>
+					<p>Formule :</p>
+					<pre>y = a × x^b</pre>
+					<p>On linéarise par log :</p>
+					<pre>log(y) = log(a) + b × log(x)</pre>
+				</div>
+
+				<div class="mb-5">
+					<h2>7. Méthode 4 : LOWESS</h2>
+					<p>
+						<strong>Locally Weighted Scatterplot Smoothing</strong>
+					</p>
+					<ul>
+						<li>Pas de formule fermée</li>
+						<li>Ajustement local autour de chaque point</li>
+						<li>Utile pour modéliser un marché très hétérogène</li>
+					</ul>
+				</div>
+
+				<div class="mb-5">
+					<h2>8. Comparaison des modèles</h2>
+					<ul>
+						<li>
+							<strong>R²</strong>
+							: plus proche de 1 = meilleur ajustement</li>
+						<li>
+							<strong>RMSE</strong>
+							: plus faible = meilleur modèle</li>
+						<li>
+							<strong>Robustesse</strong>
+							en extrapolation</li>
+					</ul>
+					<p>Le modèle logarithmique ou puissance est recommandé pour les extrapolations prudentes.</p>
+				</div>
+
+				<div class="mb-5">
+					<h2>9. Étude de cas</h2>
+					<ul>
+						<li>Graphique prix vs surface</li>
+						<li>Courbes de régression</li>
+						<li>Valeur estimée pour 1500 m²</li>
+					</ul>
+				</div>
+
+				<div class="mb-5">
+					<h2>10. Recommandations professionnelles</h2>
+					<ul>
+						<li>Inclure une annexe avec sources de données</li>
+						<li>Indiquer le niveau de fiabilité de l’estimation</li>
+						<li>Ne pas utiliser LOWESS pour extrapoler</li>
+						<li>Utiliser une plage de valeurs (min, max, médiane)</li>
+					</ul>
+					<p>
+						<em>Mise à jour : mai 2025</em>
+					</p>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+{% endblock %}

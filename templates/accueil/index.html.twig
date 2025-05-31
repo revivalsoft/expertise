@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Outil d’estimation foncière
+{% endblock %}
+
+{% block body %}
+	<div
+		class="container my-5">
+
+		<!-- En-tête -->
+		<div class="mb-5 text-center">
+			<h1 class="display-4">Outil d’estimation de terrains constructibles</h1>
+			<p class="lead">Analyse quantitative à partir de données environnementales fournies au format CSV.</p>
+		</div>
+
+		<!-- Présentation de l’outil -->
+		<div class="row mb-5">
+			<div class="col-md-8 offset-md-2">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h3 class="h5">Principe</h3>
+						<p>
+							Cet outil permet d’estimer la valeur d’un terrain constructible en exploitant des données issues de parcelles comparables
+																																																																						                        (superficie, prix total) que vous fournissez sous forme de fichier CSV.
+																																																																						                        Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
+						</p>
+
+						<h3 class="h5 mt-4">Données attendues</h3>
+						<ul>
+							<li>Un fichier
+								<strong>CSV</strong>
+								contenant deux colonnes :
+								<code>superficie</code>
+								(en m²) et
+								<code>prix</code>
+								(en €).</li>
+							<li>Le fichier doit commencer par une ligne de titre et les données sont séparées par une virgule (<a href="exemple.com">voir exemple</a>)</li>
+							<li>Les données doivent correspondre à des ventes ou évaluations de terrains similaires en termes de localisation, réglementation et contexte.</li>
+							<li>Enfin, indiquer la surface en m2 du terrain à évaluer.</li>
+						</ul>
+
+						<h3 class="h5 mt-4">Méthodes d’estimation proposées</h3>
+						<ul>
+							<li>
+								<strong>Méthode directe</strong>
+								: estimation au m² moyen pondéré.</li>
+							<li>
+								<strong>Régression linéaire</strong>
+								: ajustement sur la tendance linéaire entre surface et prix.</li>
+							<li>
+								<strong>Régression logarithmique</strong>
+								: modélisation basée sur la courbe logarithmique des prix en fonction des surfaces.</li>
+							<li>
+								<strong>Régression puissance</strong>
+								: modèle non linéaire adapté à la décroissance du prix au m² avec la taille.</li>
+							<li>
+								<strong>Méthode robuste</strong>
+								: exclusion automatique des valeurs aberrantes avant calcul.</li>
+							<li>
+								<strong>Régression locale pondérée</strong>
+								(LOWESS) : ajustement local basé sur la proximité des points.</li>
+						</ul>
+
+						<p class="mt-3">
+							Ces différentes approches sont calculées en parallèle, affichées et comparées pour fournir une estimation fiable.
+
+						</p>
+
+						<div class="text-center mt-4">
+							<a href="{{ path('csv_upload') }}" class="btn btn-primary btn-lg">Accéder à l’outil</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+{% endblock %}
