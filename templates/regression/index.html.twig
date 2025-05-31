@@ -26,6 +26,7 @@
 									<th>Inclure</th>
 									<th>Surface (m²)</th>
 									<th>Prix (€)</th>
+									<th>€/m²</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -37,6 +38,14 @@
 
 										<td>{{ surface[i] }}</td>
 										<td>{{ prix[i] }}</td>
+										<td>
+											{% if surface[i] > 0 %}
+												{{ (prix[i] / surface[i])|number_format(0, '.', ' ') }}
+												€/m²
+											{% else %}
+												–
+											{% endif %}
+										</td>
 									</tr>
 								{% endfor %}
 							</tbody>

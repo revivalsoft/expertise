@@ -21,8 +21,8 @@
 						<h3 class="h5">Principe</h3>
 						<p>
 							Cet outil permet d’estimer la valeur d’un terrain constructible en exploitant des données issues de parcelles comparables
-																																																																						                        (superficie, prix total) que vous fournissez sous forme de fichier CSV.
-																																																																						                        Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
+																																																																																																		                        (superficie, prix total) que vous fournissez sous forme de fichier CSV.
+																																																																																																		                        Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
 						</p>
 
 						<h3 class="h5 mt-4">Données attendues</h3>
@@ -34,16 +34,17 @@
 								(en m²) et
 								<code>prix</code>
 								(en €).</li>
-							<li>Le fichier doit commencer par une ligne de titre et les données sont séparées par une virgule (<a href="exemple.com">voir exemple</a>)</li>
+							<li>Le fichier doit commencer par une ligne de titre et les données sont séparées par une virgule
+								<button type="button" class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#csvExampleModal">
+									Voir un exemple de fichier CSV
+								</button>
+							</li>
 							<li>Les données doivent correspondre à des ventes ou évaluations de terrains similaires en termes de localisation, réglementation et contexte.</li>
 							<li>Enfin, indiquer la surface en m2 du terrain à évaluer.</li>
 						</ul>
 
 						<h3 class="h5 mt-4">Méthodes d’estimation proposées</h3>
 						<ul>
-							<li>
-								<strong>Méthode directe</strong>
-								: estimation au m² moyen pondéré.</li>
 							<li>
 								<strong>Régression linéaire</strong>
 								: ajustement sur la tendance linéaire entre surface et prix.</li>
@@ -53,12 +54,7 @@
 							<li>
 								<strong>Régression puissance</strong>
 								: modèle non linéaire adapté à la décroissance du prix au m² avec la taille.</li>
-							<li>
-								<strong>Méthode robuste</strong>
-								: exclusion automatique des valeurs aberrantes avant calcul.</li>
-							<li>
-								<strong>Régression locale pondérée</strong>
-								(LOWESS) : ajustement local basé sur la proximité des points.</li>
+
 						</ul>
 
 						<p class="mt-3">
@@ -76,5 +72,33 @@
 
 	</div>
 
-
+	<div class="modal fade" id="csvExampleModal" tabindex="-1" aria-labelledby="csvExampleLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="csvExampleLabel">Exemple de fichier CSV</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
+				<div class="modal-body">
+					<p>Voici un exemple de fichier CSV avec les colonnes
+						<strong>surface</strong>
+						et
+						<strong>prix</strong>
+						:</p>
+					<pre><code>surface,prix
+405,40905
+732,102480
+281,12926
+647,85404
+483,95151</code></pre>
+					<p>Assurez-vous d’enregistrer le fichier avec l'extension
+						<code>.csv</code>
+						et d'utiliser la virgule comme séparateur.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

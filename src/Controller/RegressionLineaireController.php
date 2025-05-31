@@ -75,6 +75,7 @@ class RegressionLineaireController extends AbstractController
 
         $checkedIndexes = array_keys($filteredSurface);
 
+        
         $context = [
             'file' => $file,
             'm2' => $m2,
@@ -84,6 +85,8 @@ class RegressionLineaireController extends AbstractController
             'filteredPrix' => $filteredPrix,
             'estimations' => $estimations,
             'checkedIndexes' => $checkedIndexes, // ← ajout ic
+           
+
         ];
 
         if ($request->isXmlHttpRequest()) {
@@ -93,6 +96,7 @@ class RegressionLineaireController extends AbstractController
         return $this->render('regression/index.html.twig', $context);
     }
 
+    // methode lineaire
     private function estimationLineaire(array $x, array $y, float $xInput): float
     {
         $n = count($x);
@@ -107,12 +111,14 @@ class RegressionLineaireController extends AbstractController
         return round($intercept + $slope * $xInput, 2);
     }
 
+    //methode logarithmique
     private function estimationLog(array $x, array $y, float $xInput): float
     {
         $xLog = array_map(fn ($v) => log($v), $x);
         return $this->estimationLineaire($xLog, $y, log($xInput));
     }
 
+        //methode puissance
     private function estimationPower(array $x, array $y, float $xInput): float
     {
         $xLog = array_map(fn ($v) => log($v), $x);
@@ -121,4 +127,57 @@ class RegressionLineaireController extends AbstractController
         $logEstimate = $this->estimationLineaire($xLog, $yLog, log($xInput));
         return round(exp($logEstimate), 2);
     }
+
+
+//-------------------------------------
+    //  Coefficient de détermination (R²)
+    private function rSquared(array $y, array $yPred): float
+    {
+        $meanY = array_sum($y) / count($y);
+        $ssTot = array_sum(array_map(fn($yi) => ($yi - $meanY) ** 2, $y));
+        $ssRes = array_sum(array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred));
+
+        return round(1 - ($ssRes / $ssTot), 4);
+    }
+
+    //Erreur quadratique moyenne (RMSE)
+    private function rmse(array $y, array $yPred): float
+    {
+        $n = count($y);
+        $squaredErrors = array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred);
+        return round(sqrt(array_sum($squaredErrors) / $n), 2);
+    }
+    // Estimation LOWESS (version simplifiée)
+
+    private function estimationLowess(array $x, array $y, float $xInput, float $bandwidth = 0.3): float
+    {
+        $n = count($x);
+        $distances = array_map(fn($xi) => abs($xi - $xInput), $x);
+        $sorted = $distances;
+        asort($sorted);
+        $k = (int) round($bandwidth * $n);
+
+        $indexes = array_slice(array_keys($sorted), 0, $k, true);
+        $weights = [];
+
+        foreach ($indexes as $i) {
+            $d = $distances[$i];
+            $maxD = $distances[$indexes[array_key_last($indexes)]] ?? 1;
+            $w = $maxD > 0 ? pow(1 - pow($d / $maxD, 3), 3) : 1;
+            $weights[$i] = $w;
+        }
+
+        $weightedSum = 0;
+        $weightTotal = 0;
+        foreach ($weights as $i => $w) {
+            $weightedSum += $w * $y[$i];
+            $weightTotal += $w;
+        }
+
+        return round($weightTotal > 0 ? $weightedSum / $weightTotal : 0, 2);
+    }
+
+
+//----------------------------------
+
 }

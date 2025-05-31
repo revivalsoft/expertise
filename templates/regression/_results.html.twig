@@ -16,6 +16,80 @@
 	</div>
 {% endif %}
 
+
+{% if estimation_lineaire is defined %}
+	<div class="card mb-3 border-primary">
+		<div class="card-header bg-primary text-white">Régression linéaire</div>
+		<div class="card-body">
+			<p>
+				<strong>Estimation :</strong>
+				{{ estimation_lineaire }}
+				€</p>
+			<p>
+				<strong>R² :</strong>
+				{{ r2_lineaire }}</p>
+			<p>
+				<strong>RMSE :</strong>
+				{{ rmse_lineaire }}
+				€</p>
+		</div>
+	</div>
+{% endif %}
+
+{% if estimation_log is defined %}
+	<div class="card mb-3 border-success">
+		<div class="card-header bg-success text-white">Régression logarithmique</div>
+		<div class="card-body">
+			<p>
+				<strong>Estimation :</strong>
+				{{ estimation_log }}
+				€</p>
+			<p>
+				<strong>R² :</strong>
+				{{ r2_log }}</p>
+			<p>
+				<strong>RMSE :</strong>
+				{{ rmse_log }}
+				€</p>
+		</div>
+	</div>
+{% endif %}
+
+{% if estimation_power is defined %}
+	<div class="card mb-3 border-warning">
+		<div class="card-header bg-warning text-dark">Régression puissance</div>
+		<div class="card-body">
+			<p>
+				<strong>Estimation :</strong>
+				{{ estimation_power }}
+				€</p>
+			<p>
+				<strong>R² :</strong>
+				{{ r2_power }}</p>
+			<p>
+				<strong>RMSE :</strong>
+				{{ rmse_power }}
+				€</p>
+		</div>
+	</div>
+{% endif %}
+
+{% if estimation_lowess is defined %}
+	<div class="card mb-3 border-dark">
+		<div class="card-header bg-dark text-white">LOWESS</div>
+		<div class="card-body">
+			<p>
+				<strong>Estimation :</strong>
+				{{ estimation_lowess }}
+				€</p>
+			<p>
+				<em>Pas de R² ou RMSE disponible pour LOWESS (méthode locale).</em>
+			</p>
+		</div>
+	</div>
+{% endif %}
+
+
 <script type="application/json" id="surface-data">{{ filteredSurface|json_encode }}</script>
 <script type="application/json" id="prix-data">{{ filteredPrix|json_encode }}</script>
 <canvas id="resultChart" class="mt-4 w-100"></canvas>
