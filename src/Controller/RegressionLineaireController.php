@@ -13,7 +13,7 @@ class RegressionLineaireController extends AbstractController
     public function index(Request $request): Response
     {
         $file = trim($request->query->get('file') ?? '');
-        $m2 = $request->get('surface'); // permet GET et POST
+        $m2 = $request->get('surface');
         $checkedIndexes = $request->request->all('checked') ?? [];
 
         $surface = [];
@@ -30,25 +30,19 @@ class RegressionLineaireController extends AbstractController
             if ($handle !== false) {
                 $lineIndex = 0;
                 while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                    if (count($data) < 2) {
-                        continue;
-                    }
-
+                    if (count($data) < 2) continue;
                     if ($lineIndex === 0 && (!is_numeric($data[0]) || !is_numeric($data[1]))) {
                         $lineIndex++;
-                        continue; // ignore ligne de titre
+                        continue;
                     }
-
                     $surface[] = floatval($data[0]);
                     $prix[] = floatval($data[1]);
-
                     $lineIndex++;
                 }
                 fclose($handle);
             }
         }
 
-        // Appliquer les filtres
         $filteredSurface = [];
         $filteredPrix = [];
         foreach ($checkedIndexes as $index) {
@@ -64,18 +58,29 @@ class RegressionLineaireController extends AbstractController
         }
 
         $estimations = null;
+        $scores = null;
         if ($m2 && count($filteredSurface) > 1) {
             $m2Value = floatval($m2);
             $estimations = [
                 'linéaire' => $this->estimationLineaire($filteredSurface, $filteredPrix, $m2Value),
                 'logarithmique' => $this->estimationLog($filteredSurface, $filteredPrix, $m2Value),
                 'puissance' => $this->estimationPower($filteredSurface, $filteredPrix, $m2Value),
+                'lowess' => $this->estimationLowess($filteredSurface, $filteredPrix, $m2Value),
+            ];
+
+            $yHatLinear = [];
+            foreach ($filteredSurface as $xi) {
+                $yHatLinear[] = $this->estimationLineaire($filteredSurface, $filteredPrix, $xi);
+            }
+
+            $scores = [
+                'r2_lineaire' => $this->rSquared($filteredPrix, $yHatLinear),
+                'rmse_lineaire' => $this->rmse($filteredPrix, $yHatLinear),
             ];
         }
 
         $checkedIndexes = array_keys($filteredSurface);
 
-        
         $context = [
             'file' => $file,
             'm2' => $m2,
@@ -84,9 +89,14 @@ class RegressionLineaireController extends AbstractController
             'filteredSurface' => $filteredSurface,
             'filteredPrix' => $filteredPrix,
             'estimations' => $estimations,
-            'checkedIndexes' => $checkedIndexes, // ← ajout ic
-           
-
+            'checkedIndexes' => $checkedIndexes,
+            'scores' => $scores,
+            'graphData' => [
+            'surface' => $filteredSurface,
+            'prix' => $filteredPrix,
+            'slope' => $slope ?? null,
+            'intercept' => $intercept ?? null,
+            ],
         ];
 
         if ($request->isXmlHttpRequest()) {
@@ -96,7 +106,6 @@ class RegressionLineaireController extends AbstractController
         return $this->render('regression/index.html.twig', $context);
     }
 
-    // methode lineaire
     private function estimationLineaire(array $x, array $y, float $xInput): float
     {
         $n = count($x);
@@ -111,43 +120,19 @@ class RegressionLineaireController extends AbstractController
         return round($intercept + $slope * $xInput, 2);
     }
 
-    //methode logarithmique
     private function estimationLog(array $x, array $y, float $xInput): float
     {
         $xLog = array_map(fn ($v) => log($v), $x);
         return $this->estimationLineaire($xLog, $y, log($xInput));
     }
 
-        //methode puissance
     private function estimationPower(array $x, array $y, float $xInput): float
     {
         $xLog = array_map(fn ($v) => log($v), $x);
         $yLog = array_map(fn ($v) => log($v), $y);
-
         $logEstimate = $this->estimationLineaire($xLog, $yLog, log($xInput));
         return round(exp($logEstimate), 2);
     }
-
-
-//-------------------------------------
-    //  Coefficient de détermination (R²)
-    private function rSquared(array $y, array $yPred): float
-    {
-        $meanY = array_sum($y) / count($y);
-        $ssTot = array_sum(array_map(fn($yi) => ($yi - $meanY) ** 2, $y));
-        $ssRes = array_sum(array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred));
-
-        return round(1 - ($ssRes / $ssTot), 4);
-    }
-
-    //Erreur quadratique moyenne (RMSE)
-    private function rmse(array $y, array $yPred): float
-    {
-        $n = count($y);
-        $squaredErrors = array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred);
-        return round(sqrt(array_sum($squaredErrors) / $n), 2);
-    }
-    // Estimation LOWESS (version simplifiée)
 
     private function estimationLowess(array $x, array $y, float $xInput, float $bandwidth = 0.3): float
     {
@@ -159,7 +144,6 @@ class RegressionLineaireController extends AbstractController
 
         $indexes = array_slice(array_keys($sorted), 0, $k, true);
         $weights = [];
-
         foreach ($indexes as $i) {
             $d = $distances[$i];
             $maxD = $distances[$indexes[array_key_last($indexes)]] ?? 1;
@@ -177,7 +161,18 @@ class RegressionLineaireController extends AbstractController
         return round($weightTotal > 0 ? $weightedSum / $weightTotal : 0, 2);
     }
 
+    private function rSquared(array $y, array $yPred): float
+    {
+        $meanY = array_sum($y) / count($y);
+        $ssTot = array_sum(array_map(fn($yi) => ($yi - $meanY) ** 2, $y));
+        $ssRes = array_sum(array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred));
+        return round(1 - ($ssRes / $ssTot), 4);
+    }
 
-//----------------------------------
-
+    private function rmse(array $y, array $yPred): float
+    {
+        $n = count($y);
+        $squaredErrors = array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred);
+        return round(sqrt(array_sum($squaredErrors) / $n), 2);
+    }
 }

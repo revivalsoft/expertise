@@ -5,19 +5,18 @@
 
 {% block body %}
 	<div class="mb-3 text-end no-print">
-		<button onclick="window.print()" class="btn btn-outline-secondary">
-			🖨️ Imprimer
-		</button>
+		<button onclick="window.print()" class="btn btn-outline-secondary">🖨️ Imprimer</button>
 	</div>
 
 	<div class="row">
-		<div class="col-lg-8">
+		<div class="col-lg-7 col-md-12">
 			<form id="regression-form" method="POST">
 				<input type="hidden" name="file" value="{{ file|trim }}">
 				<div class="mb-3">
 					<label for="surface">Surface à estimer (m²)</label>
 					<input type="number" name="surface" id="surface" class="form-control" value="{{ m2 }}" required>
 				</div>
+
 				{% if surface is defined and prix is defined and surface|length > 0 and prix|length > 0 %}
 					<div class="table-responsive">
 						<table class="table table-bordered text-center">
@@ -26,26 +25,16 @@
 									<th>Inclure</th>
 									<th>Surface (m²)</th>
 									<th>Prix (€)</th>
-									<th>€/m²</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% for i in 0..(surface|length - 1) %}
 									<tr>
 										<td>
-											<input type="checkbox" name="checked[]" value="{{ i }}" class="data-checkbox form-check-input" checked>
+											<input type="checkbox" name="checked[]" value="{{ i }}" class="data-checkbox form-check-input" {% if i in checkedIndexes %} checked {% endif %}>
 										</td>
-
 										<td>{{ surface[i] }}</td>
 										<td>{{ prix[i] }}</td>
-										<td>
-											{% if surface[i] > 0 %}
-												{{ (prix[i] / surface[i])|number_format(0, '.', ' ') }}
-												€/m²
-											{% else %}
-												–
-											{% endif %}
-										</td>
 									</tr>
 								{% endfor %}
 							</tbody>
@@ -56,16 +45,19 @@
 				{% endif %}
 			</form>
 		</div>
-		<div class="col-lg-4">
-			<div id="regression-results" class="sticky-top">
-				{% include 'regression/_results.html.twig' %}
+
+		<div class="col-lg-5 col-md-12">
+			<div class="sticky-top" style="top: 80px;">
+				<div id="regression-results">
+					{% include 'regression/_results.html.twig' %}
+				</div>
 			</div>
 		</div>
 	</div>
 {% endblock %}
 
-
 {% block javascripts %}
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
 const form = document.getElementById('regression-form');
@@ -81,86 +73,81 @@ headers: {
 'X-Requested-With': 'XMLHttpRequest'
 }
 }).then(response => response.text()).then(html => {
-document.getElementById('regression-results').innerHTML = html;
+const resultDiv = document.getElementById('regression-results');
+resultDiv.innerHTML = html;
 
-const surfaceEl = document.getElementById('surface-data');
-const prixEl = document.getElementById('prix-data');
-if (surfaceEl && prixEl) {
-const surface = JSON.parse(surfaceEl.textContent);
-const prix = JSON.parse(prixEl.textContent);
-renderChart(surface, prix);
-}
+// 🔁 Recharge le graphique après remplacement du HTML
+initChartFromResults();
 }).catch(error => console.error('Erreur AJAX :', error));
 }
 
-document.addEventListener('change', function (e) {
-if (e.target.classList.contains('data-checkbox')) {
-submitForm();
-}
+document.querySelectorAll('.data-checkbox').forEach(cb => {
+cb.addEventListener('change', submitForm);
 });
-
 document.getElementById('surface').addEventListener('input', submitForm);
+
+// Premier chargement du graphique
+initChartFromResults();
 });
 
-function renderChart(surface, prix) {
-const ctx = document.getElementById('resultChart');
-if (! ctx || typeof Chart === 'undefined') {
-console.warn("Chart.js non disponible ou canvas manquant.");
+function initChartFromResults() {
+const chartCanvas = document.getElementById('resultChart');
+if (! chartCanvas) 
 return;
-}
 
-const dataPoints = surface.map((s, i) => ({x: s, y: prix[i]}));
 
-// 👉 Calcul de la droite de régression (méthode des moindres carrés)
-const n = surface.length;
-const sumX = surface.reduce((a, b) => a + b, 0);
-const sumY = prix.reduce((a, b) => a + b, 0);
-const sumXY = surface.reduce((acc, x, i) => acc + x * prix[i], 0);
-const sumX2 = surface.reduce((acc, x) => acc + x * x, 0);
+const rawData = chartCanvas.dataset.points ? JSON.parse(chartCanvas.dataset.points) : [];
+if (! rawData.length) 
+return;
 
+
+const slopeData = [... rawData].sort((a, b) => a.x - b.x);
+const slopeStart = slopeData[0];
+const slopeEnd = slopeData[slopeData.length - 1];
+
+const slopeY = x => {
+const n = rawData.length;
+const sumX = rawData.reduce((acc, v) => acc + v.x, 0);
+const sumY = rawData.reduce((acc, v) => acc + v.y, 0);
+const sumXY = rawData.reduce((acc, v) => acc + v.x * v.y, 0);
+const sumX2 = rawData.reduce((acc, v) => acc + v.x * v.x, 0);
 const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
 const intercept = (sumY - slope * sumX) / n;
+return slope * x + intercept;
+};
 
-const minX = Math.min(... surface);
-const maxX = Math.max(... surface);
-const regressionLine = [
+const slopeLine = [
 {
-x: minX,
-y: slope * minX + intercept
+x: slopeStart.x,
+y: slopeY(slopeStart.x)
 }, {
-x: maxX,
-y: slope * maxX + intercept
-}
+x: slopeEnd.x,
+y: slopeY(slopeEnd.x)
+},
 ];
 
-// 🔁 Détruire l'ancien graphique s'il existe
-if (window.resultChartInstance) {
-window.resultChartInstance.destroy();
-}
-
-window.resultChartInstance = new Chart(ctx.getContext('2d'), {
+new Chart(chartCanvas.getContext('2d'), {
 type: 'scatter',
 data: {
 datasets: [
 {
 label: 'Données sélectionnées',
-data: dataPoints,
-backgroundColor: 'rgba(13,110,253,0.7)'
+data: rawData,
+backgroundColor: 'rgba(75, 192, 192, 0.8)',
+showLine: false
 }, {
-label: 'Régression linéaire',
-data: regressionLine,
+label: 'Pente linéaire',
+data: slopeLine,
 type: 'line',
-borderColor: 'rgba(255,99,132,0.9)',
+borderColor: 'rgba(255, 99, 132, 1)',
 borderWidth: 2,
 fill: false,
-pointRadius: 0,
-tension: 0
+pointRadius: 0
 }
 ]
 },
 options: {
 responsive: true,
-maintainAspectRatio: false,
 scales: {
 x: {
 title: {

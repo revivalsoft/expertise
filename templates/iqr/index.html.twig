@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analyse IQR
+{% endblock %}
+
+{% block body %}
+	<h1 class="mb-4">Détection des outliers sur un fichier CSV</h1>
+
+	<form method="get" class="mb-4">
+		<div class="row g-2 align-items-end">
+			<div class="col-md-6">
+				<label for="file" class="form-label">Sélectionnez un fichier :</label>
+				<select name="file" id="file" class="form-select" onchange="this.form.submit()">
+					<option value="">-- Choisir un fichier --</option>
+					{% for file in files %}
+						<option value="{{ file }}" {{ selectedFile == file ? 'selected' : '' }}>{{ file }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+	</form>
+
+	{% if result %}
+		<h2 class="mt-4">Résultats</h2>
+
+		<table class="table table-bordered table-striped mt-3">
+			<thead class="table-dark text-center">
+				<tr>
+					<th>Surface</th>
+					<th>Prix</th>
+					<th>€/m²</th>
+					<th>Outlier ?</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in result.data %}
+					<tr class="{{ row.outlier ? 'table-danger' : '' }}">
+						<td>{{ row.surface }}</td>
+						<td>{{ row.prix }}</td>
+						<td>{{ row.prix_m2|number_format(2, '.', ' ') }}</td>
+						<td>{{ row.outlier ? 'Oui' : 'Non' }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<div class="alert alert-secondary mt-4">
+			<p>
+				<strong>Q1 :</strong>
+				{{ result.q1|number_format(2) }}
+				€/m²</p>
+			<p>
+				<strong>Q3 :</strong>
+				{{ result.q3|number_format(2) }}
+				€/m²</p>
+			<p>
+				<strong>IQR :</strong>
+				{{ result.iqr|number_format(2) }}
+				€/m²</p>
+			<p>
+				<strong>Seuil bas :</strong>
+				{{ result.seuilBas|number_format(2) }}
+				€/m²</p>
+			<p>
+				<strong>Seuil haut :</strong>
+				{{ result.seuilHaut|number_format(2) }}
+				€/m²</p>
+			<hr>
+			<p>
+				<strong>Prix/m² maximum observé :</strong>
+				{{ result.prixMax|number_format(2) }}
+				€/m²</p>
+			{% if result.prixMax > result.seuilHaut %}
+				<p class="text-danger">⚠️ Des valeurs supérieures à
+					{{ result.seuilHaut|number_format(2) }}
+					€/m² sont considérées comme des outliers.</p>
+			{% else %}
+				<p class="text-success">✅ Aucun prix/m² n'excède le seuil haut défini par l'IQR.</p>
+			{% endif %}
+		</div>
+
+		<div class="mt-5">
+			<h3>Graphique €/m² et Outliers</h3>
+			<canvas id="iqrChart" style="height: 400px;"></canvas>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{% if result %}
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+const rawData = {{ result.data|json_encode|raw }};
+const seuilBas = {{ result.seuilBas }};
+const seuilHaut = {{ result.seuilHaut }};
+
+const normalPoints = rawData.filter(row => !row.outlier).map(row => ({x: row.surface, y: row.prix_m2}));
+const outlierPoints = rawData.filter(row => row.outlier).map(row => ({x: row.surface, y: row.prix_m2}));
+
+const minX = Math.min(... rawData.map(r => r.surface));
+const maxX = Math.max(... rawData.map(r => r.surface));
+
+const seuilBasLine = [
+{
+x: minX,
+y: seuilBas
+}, {
+x: maxX,
+y: seuilBas
+}
+];
+const seuilHautLine = [
+{
+x: minX,
+y: seuilHaut
+}, {
+x: maxX,
+y: seuilHaut
+}
+];
+
+const ctx = document.getElementById('iqrChart').getContext('2d');
+new Chart(ctx, {
+type: 'scatter',
+data: {
+datasets: [
+{
+label: 'Points valides',
+data: normalPoints,
+backgroundColor: 'rgba(54, 162, 235, 0.7)'
+}, {
+label: 'Outliers',
+data: outlierPoints,
+backgroundColor: 'rgba(255, 99, 132, 0.9)'
+}, {
+label: 'Seuil bas',
+data: seuilBasLine,
+type: 'line',
+borderColor: 'orange',
+borderDash: [
+5, 5
+],
+fill: false,
+pointRadius: 0
+}, {
+label: 'Seuil haut',
+data: seuilHautLine,
+type: 'line',
+borderColor: 'green',
+borderDash: [
+5, 5
+],
+fill: false,
+pointRadius: 0
+}
+]
+},
+options: {
+responsive: true,
+plugins: {
+legend: {
+position: 'top'
+}
+},
+scales: {
+x: {
+title: {
+display: true,
+text: 'Surface (m²)'
+}
+},
+y: {
+title: {
+display: true,
+text: '€/m²'
+}
+}
+}
+}
+});
+});
+		</script>
+	{% endif %}
+{% endblock %}
