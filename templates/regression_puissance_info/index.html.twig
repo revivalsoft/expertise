@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Méthode de régression puissance – Estimation foncière
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="text-center mb-4">
+			<h1 class="display-5">Régression puissance</h1>
+			<p class="lead">Un modèle adapté aux comportements non linéaires du marché foncier</p>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h2 class="h5 mb-3">Qu’est-ce que la régression puissance ?</h2>
+						<p>
+							La régression puissance (ou "power regression") est une méthode statistique permettant de modéliser une relation entre deux variables suivant une loi de puissance.
+																				C’est une alternative efficace lorsque la relation entre surface et prix suit une croissance ou décroissance exponentielle.
+						</p>
+
+						<h2 class="h5 mt-4">Pourquoi utiliser cette méthode ?</h2>
+						<ul>
+							<li>✔️ Elle s’adapte aux courbes où le prix au m² décroît selon une loi non linéaire.</li>
+							<li>✔️ Elle reflète mieux certains marchés où l’effet de taille est très marqué.</li>
+							<li>✔️ Elle est robuste pour détecter des tendances dans des données dispersées.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Comment ça marche ?</h2>
+						<ol>
+							<li>On transforme les deux variables en logarithmes (prix et surface).</li>
+							<li>On applique une régression linéaire sur ces données transformées.</li>
+							<li>On reconvertit le résultat en une équation de la forme :
+								<code>prix = a × surface^b</code>
+							</li>
+						</ol>
+
+						<h2 class="h5 mt-4">Formule utilisée</h2>
+						<p>
+							Le modèle est de la forme :
+							<code>prix = a × surface<sup>b</sup>
+							</code><br>
+							Où :
+							<ul>
+								<li>
+									<code>a</code>
+									est un coefficient de proportionnalité</li>
+								<li>
+									<code>b</code>
+									est l’exposant (souvent &lt; 1 si le prix/m² diminue avec la surface)</li>
+							</ul>
+							C’est une forme d’équation utile pour modéliser des rendements décroissants.
+						</p>
+
+						<h2 class="h5 mt-4">Limites de la méthode</h2>
+						<ul>
+							<li>Elle nécessite que toutes les surfaces et tous les prix soient strictement positifs (logarithmes).</li>
+							<li>Elle peut surcorriger dans les cas où les très grands terrains sont peu représentés.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Conclusion</h2>
+						<p>
+							La régression puissance est un outil puissant pour modéliser des relations complexes entre surface et prix.
+																				Elle complète utilement les approches linéaires et logarithmiques, notamment sur des jeux de données où les effets d’échelle sont marqués.
+						</p>
+
+						<div class="text-center mt-4">
+							<a href="{{ path('app_accueil') }}" class="btn btn-primary">Retour à l’accueil</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

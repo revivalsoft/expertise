@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Méthode de régression logarithmique – Estimation foncière
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="text-center mb-4">
+			<h1 class="display-5">Régression logarithmique</h1>
+			<p class="lead">Estimation prenant en compte une croissance non linéaire des prix</p>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h2 class="h5 mb-3">Qu’est-ce que la régression logarithmique ?</h2>
+						<p>
+							La régression logarithmique est une méthode mathématique qui modélise la relation entre deux variables lorsque la variation de la variable dépendante ralentit avec l’augmentation de la variable indépendante.
+																				Dans notre cas, cela signifie que le prix total d’un terrain augmente, mais plus lentement à mesure que la surface devient grande.
+						</p>
+
+						<h2 class="h5 mt-4">Pourquoi utiliser cette méthode ?</h2>
+						<ul>
+							<li>✔️ Elle reflète une réalité du marché : les grands terrains coûtent souvent moins cher au m².</li>
+							<li>✔️ Elle permet de mieux modéliser des courbes de prix décroissants.</li>
+							<li>✔️ Elle est simple à calculer tout en offrant une alternative plus réaliste que la régression linéaire.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Comment ça marche ?</h2>
+						<ol>
+							<li>On transforme la variable indépendante (surface) en appliquant le logarithme.</li>
+							<li>On applique une régression linéaire classique sur ces données transformées.</li>
+							<li>On utilise la courbe obtenue pour prédire le prix à partir de la surface (via son logarithme).</li>
+						</ol>
+
+						<h2 class="h5 mt-4">Formule utilisée</h2>
+						<p>
+							Le modèle est de la forme :
+							<code>prix = a × log(surface) + b</code><br>
+							Où :
+							<ul>
+								<li>
+									<code>a</code>
+									est le coefficient de croissance logarithmique</li>
+								<li>
+									<code>b</code>
+									est le terme constant</li>
+							</ul>
+							Cette fonction traduit une croissance qui ralentit avec la taille.
+						</p>
+
+						<h2 class="h5 mt-4">Limites de la méthode</h2>
+						<ul>
+							<li>Elle ne fonctionne pas pour des surfaces nulles ou négatives (le logarithme est alors impossible).</li>
+							<li>Elle peut sous-estimer les petits terrains très chers s’ils ne suivent pas cette logique.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Conclusion</h2>
+						<p>
+							La régression logarithmique est particulièrement adaptée aux marchés où le prix au m² diminue à mesure que la surface augmente.
+																				Elle permet une modélisation plus fine que la régression linéaire, tout en restant simple et rapide à utiliser.
+						</p>
+
+						<div class="text-center mt-4">
+							<a href="{{ path('app_accueil') }}" class="btn btn-primary">Retour à l’accueil</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

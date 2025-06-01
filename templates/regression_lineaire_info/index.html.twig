@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Méthode de régression linéaire – Estimation foncière
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="text-center mb-4">
+			<h1 class="display-5">Régression linéaire</h1>
+			<p class="lead">Estimation basée sur une tendance globale entre surface et prix</p>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h2 class="h5 mb-3">Qu’est-ce que la régression linéaire ?</h2>
+						<p>
+							La régression linéaire est une méthode statistique simple qui cherche à modéliser la relation entre deux variables par une droite.
+																																		Dans le cadre de l’estimation foncière, elle permet d’estimer le prix d’un terrain en fonction de sa superficie.
+						</p>
+
+						<h2 class="h5 mt-4">Pourquoi utiliser cette méthode ?</h2>
+						<ul>
+							<li>✔️ Elle offre une vision globale de la tendance du marché.</li>
+							<li>✔️ Elle est rapide à calculer et simple à interpréter.</li>
+							<li>✔️ Elle est adaptée quand les données suivent une tendance régulière.</li>
+						</ul>
+						<p>
+							Elle est particulièrement utile lorsque la relation entre la surface et le prix est linéaire, c’est-à-dire que le prix augmente régulièrement avec la taille.
+						</p>
+
+						<h2 class="h5 mt-4">Comment ça marche ?</h2>
+						<ol>
+							<li>On trace un nuage de points avec la surface en abscisse et le prix en ordonnée.</li>
+							<li>La méthode calcule la droite "la plus proche" de tous ces points (moindres carrés).</li>
+							<li>Cette droite permet ensuite de prédire le prix pour une surface donnée.</li>
+						</ol>
+
+						<h2 class="h5 mt-4">Formule utilisée</h2>
+						<p>
+							La droite est de la forme :
+							<code>prix = a × surface + b</code><br>
+							Où :
+							<ul>
+								<li>
+									<code>a</code>
+									est la pente (variation du prix par m²)</li>
+								<li>
+									<code>b</code>
+									est l’ordonnée à l’origine (prix théorique pour surface = 0)</li>
+							</ul>
+						</p>
+
+						<h2 class="h5 mt-4">Limites de la méthode</h2>
+						<ul>
+							<li>Elle suppose une relation linéaire, ce qui n’est pas toujours le cas dans l’immobilier.</li>
+							<li>Elle peut être biaisée par des points extrêmes ou des données non représentatives.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Conclusion</h2>
+						<p>
+							La régression linéaire est une méthode de base fiable pour une première estimation.
+																																		Elle peut être complétée par d’autres approches plus souples comme LOWESS pour affiner le résultat.
+						</p>
+
+						<div class="text-center mt-4">
+							<a href="{{ path('app_accueil') }}" class="btn btn-primary">Retour à l’accueil</a>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

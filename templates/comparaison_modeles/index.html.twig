@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comparaison des modèles d’estimation
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="text-center mb-4">
+			<h1 class="display-5">Comparaison des modèles</h1>
+			<p class="lead">Critères d’évaluation des méthodes de régression</p>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+				<div class="card shadow-sm">
+					<div class="card-body">
+
+						<div class="alert alert-info">
+							⚠️
+							<strong>Actuellement, la comparaison quantitative des modèles (R², RMSE) est uniquement effectuée pour la méthode de
+								<u>régression linéaire</u>.</strong><br>
+							Les autres méthodes (logarithmique, puissance, LOWESS) sont présentées à titre informatif sans évaluation chiffrée automatique.
+						</div>
+
+						<h2 class="h5 mt-4">1. Coefficient de détermination
+							<code>R²</code>
+						</h2>
+						<p>
+							Le coefficient
+							<strong>R²</strong>
+							mesure la part de la variation du prix expliquée par la surface dans le modèle.
+																				Plus il est proche de
+							<code>1</code>, meilleur est l’ajustement.
+						</p>
+
+						<h2 class="h5 mt-4">2. Erreur quadratique moyenne
+							<code>RMSE</code>
+						</h2>
+						<p>
+							Le
+							<strong>RMSE</strong>
+							(Root Mean Squared Error) exprime l’écart type moyen entre les valeurs observées et estimées.
+																				Plus le RMSE est bas, plus le modèle est précis.
+						</p>
+
+						<h2 class="h5 mt-4">3. Robustesse en extrapolation</h2>
+						<p>
+							Ce critère est qualitatif : il désigne la capacité d’un modèle à rester fiable en dehors de la plage de données disponibles.
+						</p>
+						<ul>
+							<li>🔹 La régression linéaire reste stable mais peut être imprécise en dehors des données.</li>
+							<li>🔹 La régression logarithmique et puissance peuvent mieux s’adapter à des effets de taille.</li>
+							<li>🔹 LOWESS est précise sur les données connues mais ne doit pas être extrapolée.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Conclusion</h2>
+						<p>
+							Les critères
+							<strong>R²</strong>
+							et
+							<strong>RMSE</strong>
+							sont fournis uniquement pour la régression linéaire afin d’évaluer objectivement la qualité d’ajustement.
+																				Ils seront étendus aux autres modèles dans une future version.
+						</p>
+
+						<div class="text-center mt-4">
+							<a href="{{ path('app_guide') }}" class="btn btn-primary">Retour au guide</a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

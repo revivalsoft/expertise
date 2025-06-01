@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Méthode LOWESS – Estimation locale pondérée
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="text-center mb-4">
+			<h1 class="display-5">Méthode LOWESS</h1>
+			<p class="lead">Régression locale pondérée pour une estimation plus souple et précise</p>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<h2 class="h5 mb-3">Qu’est-ce que la méthode LOWESS ?</h2>
+						<p>
+							LOWESS (Locally Weighted Scatterplot Smoothing) est une méthode de régression non paramétrique qui permet de modéliser une relation entre deux variables sans supposer une forme mathématique précise (comme une droite ou une courbe exponentielle).
+						</p>
+						<p>
+							Elle repose sur des ajustements locaux : pour chaque point à estimer, LOWESS utilise un voisinage de points proches et effectue une régression pondérée, donnant plus d’importance aux points les plus proches.
+						</p>
+
+						<h2 class="h5 mt-4">Pourquoi utiliser LOWESS pour estimer un prix de terrain ?</h2>
+						<ul>
+							<li>✔️ Elle s’adapte aux variations locales du marché.</li>
+							<li>✔️ Elle est robuste aux données irrégulières ou bruitées.</li>
+							<li>✔️ Elle ne suppose pas que le prix évolue linéairement avec la surface.</li>
+						</ul>
+						<p>
+							Cette méthode est particulièrement utile lorsque le prix au m² n’est pas constant, mais varie selon la taille du terrain ou d’autres facteurs non modélisés directement.
+						</p>
+
+						<h2 class="h5 mt-4">Comment fonctionne-t-elle ?</h2>
+						<p>Voici les grandes étapes :</p>
+						<ol>
+							<li>Sélection des points les plus proches du terrain à estimer (selon la surface).</li>
+							<li>Application de poids (souvent une fonction en cloche) : les plus proches ont plus d’impact.</li>
+							<li>Calcul d’une mini-régression sur ce sous-ensemble pondéré.</li>
+							<li>Utilisation du résultat comme estimation locale.</li>
+						</ol>
+
+						<h2 class="h5 mt-4">Limites de la méthode</h2>
+						<ul>
+							<li>Elle nécessite suffisamment de données comparables pour être fiable.</li>
+							<li>Elle peut être sensible aux points extrêmes s’ils sont isolés.</li>
+						</ul>
+
+						<h2 class="h5 mt-4">Conclusion</h2>
+						<p>
+							LOWESS est une approche souple, visuellement intuitive et statistiquement pertinente pour modéliser des données immobilières, notamment lorsqu’il existe des ruptures ou des tendances non linéaires dans les prix.
+						</p>
+
+
+						<div class="text-center mt-4">
+							<a href="{{ path('app_accueil') }}" class="btn btn-primary">Retour à l’accueil</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
