@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RegressionLineaireController extends AbstractController
+class RegressionController extends AbstractController
 {
     #[Route('/regression', name: 'app_regression', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
@@ -62,20 +62,50 @@ class RegressionLineaireController extends AbstractController
         if ($m2 && count($filteredSurface) > 1) {
             $m2Value = floatval($m2);
             $estimations = [
-                'linéaire' => $this->estimationLineaire($filteredSurface, $filteredPrix, $m2Value),
+                'lineaire' => $this->estimationLineaire($filteredSurface, $filteredPrix, $m2Value),
                 'logarithmique' => $this->estimationLog($filteredSurface, $filteredPrix, $m2Value),
                 'puissance' => $this->estimationPower($filteredSurface, $filteredPrix, $m2Value),
                 'lowess' => $this->estimationLowess($filteredSurface, $filteredPrix, $m2Value),
             ];
 
             $yHatLinear = [];
+            $yHatPower = [];
             foreach ($filteredSurface as $xi) {
                 $yHatLinear[] = $this->estimationLineaire($filteredSurface, $filteredPrix, $xi);
+                $yHatPower[] = $this->estimationPower($filteredSurface, $filteredPrix, $xi);
             }
 
+
+            $logPred = $this->predictLog($filteredSurface, $filteredPrix, $filteredSurface);
+
+            $lowessPred = $this->predictLowess($filteredSurface, $filteredPrix);
+      
             $scores = [
                 'r2_lineaire' => $this->rSquared($filteredPrix, $yHatLinear),
                 'rmse_lineaire' => $this->rmse($filteredPrix, $yHatLinear),
+                'r2_puissance' => $this->rSquared($filteredPrix, $yHatPower),
+                'rmse_puissance' => $this->rmse($filteredPrix, $yHatPower),
+                'r2_log' =>  $this->rSquared($filteredPrix, $logPred),
+                'rmse_log' => $this->rmse($filteredPrix, $logPred),
+                'r2_lowess' => $this->rSquared($filteredPrix, $lowessPred),
+                'rmse_lowess' => $this->rmse($filteredPrix, $lowessPred)
+            ];
+        }
+        $linearLine = [];
+        $logLine = [];
+        $powerLine = [];
+        foreach ($filteredSurface as $xi) {
+            $linearLine[] = ['x' => $xi, 'y' => $this->estimationLineaire($filteredSurface, $filteredPrix, $xi)];
+            $logLine[] = ['x' => $xi, 'y' => $this->estimationLog($filteredSurface, $filteredPrix, $xi)];
+            $powerLine[] = ['x' => $xi, 'y' => $this->estimationPower($filteredSurface, $filteredPrix, $xi)];
+        }
+
+
+        $lowessLine = [];
+        foreach ($filteredSurface as $xi) {
+            $lowessLine[] = [
+                'x' => $xi,
+                'y' => $this->estimationLowess($filteredSurface, $filteredPrix, $xi)
             ];
         }
 
@@ -88,14 +118,16 @@ class RegressionLineaireController extends AbstractController
             'prix' => $prix,
             'filteredSurface' => $filteredSurface,
             'filteredPrix' => $filteredPrix,
+            'linearLine' => $linearLine,
+            'logLine' => $logLine,
+            'powerLine' => $powerLine,
+            'lowessLine' => $lowessLine,
             'estimations' => $estimations,
             'checkedIndexes' => $checkedIndexes,
             'scores' => $scores,
             'graphData' => [
-            'surface' => $filteredSurface,
-            'prix' => $filteredPrix,
-            'slope' => $slope ?? null,
-            'intercept' => $intercept ?? null,
+                'surface' => $filteredSurface,
+                'prix' => $filteredPrix,
             ],
         ];
 
@@ -175,4 +207,28 @@ class RegressionLineaireController extends AbstractController
         $squaredErrors = array_map(fn($yi, $yhat) => ($yi - $yhat) ** 2, $y, $yPred);
         return round(sqrt(array_sum($squaredErrors) / $n), 2);
     }
+
+    private function predictLog(array $x, array $y, array $xInput): array
+    {
+        $xLog = array_map(fn ($v) => log($v), $x);
+        $yLog = array_map(fn ($v) => log($v), $y);
+
+        $n = count($xLog);
+        $sumX = array_sum($xLog);
+        $sumY = array_sum($yLog);
+        $sumXY = array_sum(array_map(fn($xi, $yi) => $xi * $yi, $xLog, $yLog));
+        $sumX2 = array_sum(array_map(fn($xi) => $xi * $xi, $xLog));
+
+        $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX * $sumX);
+        $a = ($sumY - $b * $sumX) / $n;
+
+        return array_map(fn($xi) => exp($a + $b * log($xi)), $xInput);
+    }
+
+    private function predictLowess(array $x, array $y): array
+    {
+        return array_map(fn($xi) => $this->estimationLowess($x, $y, $xi), $x);
+    }
+
+
 }

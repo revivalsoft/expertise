@@ -1,123 +1,75 @@
 {% if estimations %}
-	<div class="card mb-4">
-		<div class="card-header bg-primary text-white">
-			<h5 class="mb-0">Résultats des estimations</h5>
-		</div>
-		<div class="card-body table-responsive">
-			<table class="table table-hover text-center align-middle">
-				<thead class="table-light">
-					<tr>
-						<th>Méthode</th>
-						<th>Estimation (€)</th>
-						<th>Prix/m² (€)</th>
-						<th>R²</th>
-						<th>RMSE</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Régression linéaire</td>
-						<td>{{ estimations.linéaire|number_format(2, '.', ' ') }}</td>
-						<td>{{ (estimations.linéaire / m2)|number_format(2, '.', ' ') }}</td>
-						<td>{{ scores.r2_lineaire ?? '–' }}</td>
-						<td>{{ scores.rmse_lineaire ?? '–' }}</td>
-					</tr>
-					<tr>
-						<td>Régression logarithmique</td>
-						<td>{{ estimations.logarithmique|number_format(2, '.', ' ') }}</td>
-						<td>{{ (estimations.logarithmique / m2)|number_format(2, '.', ' ') }}</td>
-						<td>–</td>
-						<td>–</td>
-					</tr>
-					<tr>
-						<td>Régression puissance</td>
-						<td>{{ estimations.puissance|number_format(2, '.', ' ') }}</td>
-						<td>{{ (estimations.puissance / m2)|number_format(2, '.', ' ') }}</td>
-						<td>–</td>
-						<td>–</td>
-					</tr>
-					<tr>
-						<td>LOWESS</td>
-						<td>{{ estimations.lowess|number_format(2, '.', ' ') }}</td>
-						<td>{{ (estimations.lowess / m2)|number_format(2, '.', ' ') }}</td>
-						<td>–</td>
-						<td>–</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<canvas id="resultChart" height="250" data-points="{{ filteredSurface|map((s, i) => {'x': s, 'y': filteredPrix[i]})|json_encode }}"></canvas>
-
-
-			<script>
-				const rawData = {{ filteredSurface|map((s, i) => {'x': s, 'y': filteredPrix[i]})|json_encode|raw }};
-const slopeData = [... rawData].sort((a, b) => a.x - b.x);
-const slopeStart = slopeData[0];
-const slopeEnd = slopeData[slopeData.length - 1];
-
-const slopeY = x => {
-const n = rawData.length;
-const sumX = rawData.reduce((acc, v) => acc + v.x, 0);
-const sumY = rawData.reduce((acc, v) => acc + v.y, 0);
-const sumXY = rawData.reduce((acc, v) => acc + v.x * v.y, 0);
-const sumX2 = rawData.reduce((acc, v) => acc + v.x * v.x, 0);
-const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-const intercept = (sumY - slope * sumX) / n;
-return slope * x + intercept;
-};
-
-const slopeLine = [
-{
-x: slopeStart.x,
-y: slopeY(slopeStart.x)
-}, {
-x: slopeEnd.x,
-y: slopeY(slopeEnd.x)
-},
-];
-
-const ctx = document.getElementById('resultChart').getContext('2d');
-new Chart(ctx, {
-type: 'scatter',
-data: {
-datasets: [
-{
-label: 'Données sélectionnées',
-data: rawData,
-backgroundColor: 'rgba(75, 192, 192, 0.8)',
-showLine: false
-}, {
-label: 'Pente linéaire',
-data: slopeLine,
-type: 'line',
-borderColor: 'rgba(255, 99, 132, 1)',
-borderWidth: 2,
-fill: false,
-pointRadius: 0
-}
-]
-},
-options: {
-responsive: true,
-scales: {
-x: {
-title: {
-display: true,
-text: 'Surface (m²)'
-}
-},
-y: {
-title: {
-display: true,
-text: 'Prix (€)'
-}
-}
-}
-}
-});
-			</script>
-		</div>
+<div class="card mb-4">
+	<div class="card-header bg-primary text-white">
+		<h5 class="mb-0">Résultats des estimations</h5>
 	</div>
+	<div class="card-body table-responsive">
+		<table class="table table-hover text-center align-middle">
+			<thead class="table-light">
+				<tr>
+					<th>Méthode</th>
+					<th>Estimation (€)</th>
+					<th>Prix/m² (€)</th>
+					<th>R²</th>
+					<th>RMSE</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Régression linéaire</td>
+					<td>{{ estimations.lineaire|number_format(2, '.', ' ') }}</td>
+					<td>{{ (estimations.lineaire / m2)|number_format(2, '.', ' ') }}</td>
+					<td>{{ scores.r2_lineaire ?? '–' }}</td>
+					<td>{{ scores.rmse_lineaire ?? '–' }}</td>
+				</tr>
+				<tr>
+					<td>Régression logarithmique</td>
+					<td>{{ estimations.logarithmique|number_format(2, '.', ' ') }}</td>
+					<td>{{ (estimations.logarithmique / m2)|number_format(2, '.', ' ') }}</td>
+					<td>{{ scores.r2_log ?? '–' }}</td>
+					<td>{{ scores.rmse_log ?? '–' }}</td>
+				</tr>
+				<tr>
+					<td>Régression puissance</td>
+					<td>{{ estimations.puissance|number_format(2, '.', ' ') }}</td>
+					<td>{{ (estimations.puissance / m2)|number_format(2, '.', ' ') }}</td>
+					<td>{{ scores.r2_puissance ?? '–' }}</td>
+					<td>{{ scores.rmse_puissance ?? '–' }}</td>
+				</tr>
+				<tr>
+					<td>LOWESS</td>
+					<td>{{ estimations.lowess|number_format(2, '.', ' ') }}</td>
+					<td>{{ (estimations.lowess / m2)|number_format(2, '.', ' ') }}</td>
+					<td>{{ scores.r2_lowess ?? '–' }}</td>
+					<td>{{ scores.rmse_lowess ?? '–' }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+
+<canvas
+	id="resultChart"
+	height="250"
+	data-points='{{ filteredSurface|map((s, i) => {'x': s, 'y': filteredPrix[i]})|json_encode|e("html_attr")}}'
+	data-line-linear='{{ linearLine|json_encode|e("html_attr") }}'
+	data-line-log='{{logLine|json_encode|e("html_attr") }}'
+	data-line-power='{{ powerLine|json_encode|e("html_attr") }}'
+	data-line-lowess='{{ lowessLine|json_encode|e("html_attr") }}'
+	
+></canvas>
+
+
+
+
+	</div>
+</div>
+
+{% block javascripts %}
+ 
+   <script src="{{ asset('js/result_chart.js') }}"></script>
+{% endblock %}
+
+
 {% else %}
-	<div class="alert alert-warning">Aucune estimation possible avec les données sélectionnées.</div>
+<div class="alert alert-warning">Aucune estimation possible avec les données sélectionnées.</div>
 {% endif %}
