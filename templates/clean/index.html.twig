@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nettoyage du modèle
+{% endblock %}
+
+{% block body %}
+	<h1 class="mb-4">Nettoyer un fichier de données
+		<span style="font-size:18px">
+			<a href="/cleaner/info">(Mode d'emploi)</a>
+		</span>
+	</h1>
+
+	<form method="get" class="mb-4">
+		<div class="row g-3 align-items-end">
+			<div class="col-md-4">
+				<label for="file" class="form-label">Sélectionner un fichier :</label>
+				<select name="file" id="file" class="form-select">
+					<option value="">-- Choisir un fichier --</option>
+					{% for file in files %}
+						<option value="{{ file }}" {{ selectedFile == file ? 'selected' : '' }}>{{ file }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-md-2">
+				<label for="tol" class="form-label">Tolérance (%) :</label>
+				<input type="number" class="form-control" name="tol" id="tol" step="0.1" value="{{ tolerance|default(0) }}">
+			</div>
+			<div class="col-md-2">
+				<label for="maxViol" class="form-label">Violations max :</label>
+				<input type="number" class="form-control" name="maxViol" id="maxViol" value="{{ app.request.get('maxViol', 2) }}">
+			</div>
+			<div class="col-md-2">
+				<input type="hidden" name="action" value="nettoyer">
+				<button type="submit" class="btn btn-primary w-100">Nettoyer</button>
+			</div>
+		</div>
+	</form>
+
+	{% if selectedFile and data is not empty %}
+		<div class="alert alert-info">
+			<p>
+				<strong>Fichier analysé :</strong>
+				{{ selectedFile }}</p>
+			<p>
+				<strong>Lignes initiales :</strong>
+				{{ nbTotal }}</p>
+			<p>
+				<strong>Lignes conservées :</strong>
+				{{ nbConserve }}</p>
+			{% if outputFile %}
+				<p>
+					<strong>Fichier créé :</strong>
+					{{ outputFile }}</p>
+				<a class="btn btn-success mb-3" href="{{ path('app_regression', { file: outputFile }) }}">
+					➕ Utiliser le fichier nettoyé
+				</a>
+			{% endif %}
+		</div>
+
+		<h2>Données analysées</h2>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Surface (m²)</th>
+					<th>Prix (€)</th>
+					<th>Prix/m²</th>
+					<th>Violations</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for i, row in data %}
+					<tr class="{{ i in indexesConserves ? '' : 'table-danger' }}">
+						<td>{{ i + 1 }}</td>
+						<td>{{ row.surface }}</td>
+						<td>{{ row.prix }}</td>
+						<td>{{ row.prix_m2|number_format(2, '.', ' ') }}</td>
+						<td>{{ row.violations }}</td>
+						<td>{{ i in indexesConserves ? '✅ Conservé' : '❌ Rejeté' }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock %}

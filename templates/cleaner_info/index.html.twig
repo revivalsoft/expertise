@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Aide - Nettoyage de données
+{% endblock %}
+
+{% block body %}
+	<h1 class="mb-4">Comprendre le nettoyage de données par tolérance</h1>
+
+	<div class="mb-4">
+		<p>Cette page explique le fonctionnement de l'outil de nettoyage automatique des données du modèle foncier, accessible via l'interface de sélection de fichier CSV.</p>
+	</div>
+
+	<h2>Objectif du nettoyage</h2>
+	<p>Le but est de conserver uniquement les données respectant une logique économique attendue&nbsp;:
+		<strong>plus la surface augmente, plus le prix au m² diminue</strong>
+		ou reste stable dans certaines limites.</p>
+
+	<h2>Paramètres à disposition</h2>
+	<ul>
+		<li>
+			<strong>Tolérance (%)</strong>&nbsp;: pourcentage d'augmentation maximale du prix/m² autorisé entre deux points.</li>
+		<li>
+			<strong>Violations max</strong>&nbsp;: nombre maximal de fois où un point peut enfreindre la règle avant d'être exclu.</li>
+	</ul>
+
+	<h2>Fonctionnement du filtre</h2>
+	<p>
+		Pour chaque paire de points où la surface augmente, on vérifie que le
+		<strong>prix/m² ne dépasse pas celui du point précédent + tolérance</strong>.<br>
+		Par exemple, si un point A a un prix de 150 €/m², et que la tolérance est de 20&nbsp;% :<br>
+		alors tout point B suivant doit avoir un prix/m²
+		<strong>≤ 180 €/m²</strong>.
+	</p>
+
+	<h2>Violations</h2>
+	<p>
+		Lorsqu'un point enfreint cette règle avec plusieurs autres points, on compte une
+		<strong>violation</strong>
+		par conflit.
+		<br>
+		Si un point dépasse le nombre de violations autorisées, il est automatiquement exclu.
+	</p>
+
+	<h2>Conseils d'utilisation</h2>
+	<ul>
+		<li>Commencez avec une tolérance de 10 à 20&nbsp;% et 2 violations max.</li>
+		<li>Si trop de points sont exclus, augmentez la tolérance ou le seuil de violations.</li>
+		<li>Une fois satisfait, utilisez le fichier nettoyé pour les calculs de régression.</li>
+	</ul>
+
+	<a href="{{ path('app_nettoyage_modele') }}" class="btn btn-primary mt-4">Accéder au module de nettoyage</a>
+{% endblock %}

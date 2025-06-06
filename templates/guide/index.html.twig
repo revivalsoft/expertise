@@ -12,24 +12,20 @@
 
 
 				<div class="mb-5">
-					<h2>1. Introduction</h2>
 					<p>Ce guide vise à doter les professionnels de l'immobilier et de l'aménagement d'une base solide pour estimer la valeur d'un terrain à partir de données observées. Il combine théorie économique, modélisation statistique, et outils pratiques exploitables dans des environnements logiciels.</p>
 				</div>
 
 				<div class="mb-5">
-					<h2>2. Données nécessaires</h2>
+					<h2>Données nécessaires</h2>
 					<ul>
 						<li>Surface en m²</li>
 						<li>Prix total</li>
-						<li>Emplacement ou zone géographique</li>
-						<li>Prix au m² (dérivé)</li>
-						<li>Date de la transaction (facultatif mais utile pour ajuster l'inflation)</li>
 					</ul>
-					<p>Format recommandé : fichier CSV ou table SQL structurée.</p>
+					<p>Format demandé : fichier CSV.</p>
 				</div>
 
 				<div class="mb-5">
-					<h2>3. Nettoyage des données</h2>
+					<h2>Nettoyage des données</h2>
 
 
 					<p>On applique l’analyse des
@@ -49,7 +45,7 @@ Seuil haut = Q3 + 1.5 × IQR</pre>
 
 
 				<div class="mb-5">
-					<h2>4. Méthode 1 : Régression linéaire</h2>
+					<h2>Méthode 1 : Régression linéaire</h2>
 					<p>Formule :</p>
 					<pre>y = a × x + b</pre>
 					<ul>
@@ -69,14 +65,14 @@ Seuil haut = Q3 + 1.5 × IQR</pre>
 				</div>
 
 				<div class="mb-5">
-					<h2>5. Méthode 2 : Régression logarithmique</h2>
+					<h2>Méthode 2 : Régression logarithmique</h2>
 					<p>Formule :</p>
 					<pre>y = a × ln(x) + b</pre>
 					<p>Permet de modéliser un prix qui progresse moins vite pour les grandes surfaces.</p>
 				</div>
 
 				<div class="mb-5">
-					<h2>6. Méthode 3 : Régression puissance</h2>
+					<h2>Méthode 3 : Régression puissance</h2>
 					<p>Formule :</p>
 					<pre>y = a × x^b</pre>
 					<p>On linéarise par log :</p>
@@ -84,7 +80,7 @@ Seuil haut = Q3 + 1.5 × IQR</pre>
 				</div>
 
 				<div class="mb-5">
-					<h2>7. Méthode 4 : LOWESS</h2>
+					<h2>Méthode 4 : LOWESS</h2>
 					<p>
 						<strong>Locally Weighted Scatterplot Smoothing</strong>
 					</p>
@@ -96,7 +92,7 @@ Seuil haut = Q3 + 1.5 × IQR</pre>
 				</div>
 
 				<div class="mb-5">
-					<h2>8. Comparaison des modèles (<a href="{{ path('app_comparaison_modeles') }}">Voir détails</a>
+					<h2>Comparaison des modèles (<a href="{{ path('app_comparaison_modeles') }}">Voir détails</a>
 						)</h2>
 					<ul>
 						<li>
@@ -114,16 +110,14 @@ Seuil haut = Q3 + 1.5 × IQR</pre>
 
 
 				<div class="mb-5">
-					<h2>9. Recommandations professionnelles</h2>
+					<h2>Recommandations</h2>
 					<ul>
 						<li>Inclure une annexe avec sources de données</li>
 						<li>Indiquer le niveau de fiabilité de l’estimation</li>
 						<li>Ne pas utiliser LOWESS pour extrapoler</li>
 						<li>Utiliser une plage de valeurs (min, max, médiane)</li>
 					</ul>
-					<p>
-						<em>Mise à jour : mai 2025</em>
-					</p>
+
 				</div>
 			</div>
 

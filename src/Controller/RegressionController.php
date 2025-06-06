@@ -146,8 +146,14 @@ class RegressionController extends AbstractController
         $sumXY = array_sum(array_map(fn ($xi, $yi) => $xi * $yi, $x, $y));
         $sumX2 = array_sum(array_map(fn ($xi) => $xi ** 2, $x));
 
-        $slope = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - $sumX ** 2);
-        $intercept = ($sumY - $slope * $sumX) / $n;
+
+        $denominator = $n * $sumX2 - $sumX ** 2;
+            if ($denominator == 0) {
+                return 0; // ou null, selon ce que tu préfères
+            }
+
+            $slope = ($n * $sumXY - $sumX * $sumY) / $denominator;
+            $intercept = ($sumY - $slope * $sumX) / $n;
 
         return round($intercept + $slope * $xInput, 2);
     }
