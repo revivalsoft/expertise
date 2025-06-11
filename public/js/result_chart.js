@@ -2,13 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	const chartCanvas = document.getElementById('resultChart');
 	if (!chartCanvas || !chartCanvas.dataset.points) return;
 
-	let rawData, logLine,powerLine,lowessLine;
+	let rawData, logLine, powerLine, lowessLine, scaledLine;
 
 	try {
 		rawData = JSON.parse(chartCanvas.dataset.points);
 		logLine = JSON.parse(chartCanvas.dataset.lineLog || '[]');
-		powerLine = chartCanvas.dataset.linePower ? JSON.parse(chartCanvas.dataset.linePower) : [];
-		lowessLine = chartCanvas.dataset.lineLowess ? JSON.parse(chartCanvas.dataset.lineLowess) : []; 
+		powerLine = JSON.parse(chartCanvas.dataset.linePower || '[]');
+		lowessLine = JSON.parse(chartCanvas.dataset.lineLowess || '[]');
+		scaledLine = JSON.parse(chartCanvas.dataset.lineScaled || '[]');
 	} catch (e) {
 		console.error('Erreur de parsing des données du graphique :', e);
 		return;
@@ -82,6 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
 					type: 'line',
 					borderColor: 'blue',
 					borderDash: [1, 1],
+					borderWidth: 2,
+					fill: false,
+					pointRadius: 0
+				},
+				{
+					label: 'Régression réaliste',
+					data: scaledLine,
+					type: 'line',
+					borderColor: 'purple',
+					borderDash: [6, 2],
 					borderWidth: 2,
 					fill: false,
 					pointRadius: 0

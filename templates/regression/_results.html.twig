@@ -1,75 +1,65 @@
 {% if estimations %}
-<div class="card mb-4">
-	<div class="card-header bg-primary text-white">
-		<h5 class="mb-0">Résultats des estimations</h5>
+	<div class="card mb-4">
+		<div class="card-header bg-primary text-white">
+			<h5 class="mb-0">Résultats des estimations</h5>
+		</div>
+		<div class="card-body table-responsive">
+			<table class="table table-hover text-center align-middle">
+				<thead class="table-light">
+					<tr>
+						<th>Méthode</th>
+						<th>Estimation (€)</th>
+						<th>Prix/m² (€)</th>
+						<th>R²</th>
+						<th>RMSE</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Régression linéaire</td>
+						<td>{{ estimations.lineaire|number_format(2, '.', ' ') }}</td>
+						<td>{{ (estimations.lineaire / m2)|number_format(2, '.', ' ') }}</td>
+						<td>{{ scores.r2_lineaire ?? '–' }}</td>
+						<td>{{ scores.rmse_lineaire ?? '–' }}</td>
+					</tr>
+					<tr>
+						<td>Régression logarithmique</td>
+						<td>{{ estimations.logarithmique|number_format(2, '.', ' ') }}</td>
+						<td>{{ (estimations.logarithmique / m2)|number_format(2, '.', ' ') }}</td>
+						<td>{{ scores.r2_log ?? '–' }}</td>
+						<td>{{ scores.rmse_log ?? '–' }}</td>
+					</tr>
+					<tr>
+						<td>Régression puissance</td>
+						<td>{{ estimations.puissance|number_format(2, '.', ' ') }}</td>
+						<td>{{ (estimations.puissance / m2)|number_format(2, '.', ' ') }}</td>
+						<td>{{ scores.r2_puissance ?? '–' }}</td>
+						<td>{{ scores.rmse_puissance ?? '–' }}</td>
+					</tr>
+					<tr>
+						<td>LOWESS</td>
+						<td>{{ estimations.lowess|number_format(2, '.', ' ') }}</td>
+						<td>{{ (estimations.lowess / m2)|number_format(2, '.', ' ') }}</td>
+						<td>{{ scores.r2_lowess ?? '–' }}</td>
+						<td>{{ scores.rmse_lowess ?? '–' }}</td>
+					</tr>
+
+				</tbody>
+			</table>
+
+
+			<canvas id="resultChart" height="250" data-points='{{ filteredSurface|map((s, i) => {'x': s, 'y': filteredPrix[i]})|json_encode|e("html_attr")}}' data-line-linear='{{ linearLine|json_encode|e("html_attr") }}' data-line-log='{{logLine|json_encode|e("html_attr") }}' data-line-power='{{ powerLine|json_encode|e("html_attr") }}' data-line-lowess='{{ lowessLine|json_encode|e("html_attr") }}'></canvas>
+
+
+		</div>
 	</div>
-	<div class="card-body table-responsive">
-		<table class="table table-hover text-center align-middle">
-			<thead class="table-light">
-				<tr>
-					<th>Méthode</th>
-					<th>Estimation (€)</th>
-					<th>Prix/m² (€)</th>
-					<th>R²</th>
-					<th>RMSE</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Régression linéaire</td>
-					<td>{{ estimations.lineaire|number_format(2, '.', ' ') }}</td>
-					<td>{{ (estimations.lineaire / m2)|number_format(2, '.', ' ') }}</td>
-					<td>{{ scores.r2_lineaire ?? '–' }}</td>
-					<td>{{ scores.rmse_lineaire ?? '–' }}</td>
-				</tr>
-				<tr>
-					<td>Régression logarithmique</td>
-					<td>{{ estimations.logarithmique|number_format(2, '.', ' ') }}</td>
-					<td>{{ (estimations.logarithmique / m2)|number_format(2, '.', ' ') }}</td>
-					<td>{{ scores.r2_log ?? '–' }}</td>
-					<td>{{ scores.rmse_log ?? '–' }}</td>
-				</tr>
-				<tr>
-					<td>Régression puissance</td>
-					<td>{{ estimations.puissance|number_format(2, '.', ' ') }}</td>
-					<td>{{ (estimations.puissance / m2)|number_format(2, '.', ' ') }}</td>
-					<td>{{ scores.r2_puissance ?? '–' }}</td>
-					<td>{{ scores.rmse_puissance ?? '–' }}</td>
-				</tr>
-				<tr>
-					<td>LOWESS</td>
-					<td>{{ estimations.lowess|number_format(2, '.', ' ') }}</td>
-					<td>{{ (estimations.lowess / m2)|number_format(2, '.', ' ') }}</td>
-					<td>{{ scores.r2_lowess ?? '–' }}</td>
-					<td>{{ scores.rmse_lowess ?? '–' }}</td>
-				</tr>
-			</tbody>
-		</table>
 
+	{% block javascripts %}
 
-<canvas
-	id="resultChart"
-	height="250"
-	data-points='{{ filteredSurface|map((s, i) => {'x': s, 'y': filteredPrix[i]})|json_encode|e("html_attr")}}'
-	data-line-linear='{{ linearLine|json_encode|e("html_attr") }}'
-	data-line-log='{{logLine|json_encode|e("html_attr") }}'
-	data-line-power='{{ powerLine|json_encode|e("html_attr") }}'
-	data-line-lowess='{{ lowessLine|json_encode|e("html_attr") }}'
-	
-></canvas>
-
-
-
-
-	</div>
-</div>
-
-{% block javascripts %}
- 
-   <script src="{{ asset('js/result_chart.js') }}"></script>
-{% endblock %}
+		<script src="{{ asset('js/result_chart.js') }}"></script>
+	{% endblock %}
 
 
 {% else %}
-<div class="alert alert-warning">Aucune estimation possible avec les données sélectionnées.</div>
+	<div class="alert alert-warning">Aucune estimation possible avec les données sélectionnées.</div>
 {% endif %}

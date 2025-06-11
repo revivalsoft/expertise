@@ -34,22 +34,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initChartFromResults() {
 	const chartCanvas = document.getElementById('resultChart');
-	if (!chartCanvas) return;
+	if (!(chartCanvas instanceof HTMLCanvasElement)) {
+		console.warn("⚠️ L'élément #resultChart n'est pas un <canvas> valide.");
+		return;
+	}
 
-	console.log('📦 Contenu brut de data-points :', chartCanvas.dataset.points);
+	console.log('📦 data-points :', chartCanvas.dataset.points);
 
 	let rawData = [];
 	let logLine = [];
 	let powerLine = [];
 	let lowessLine = [];
+	let scaledLine = [];
 
 	try {
 		rawData = chartCanvas.dataset.points ? JSON.parse(chartCanvas.dataset.points) : [];
 		logLine = chartCanvas.dataset.lineLog ? JSON.parse(chartCanvas.dataset.lineLog) : [];
 		powerLine = chartCanvas.dataset.linePower ? JSON.parse(chartCanvas.dataset.linePower) : [];
-		lowessLine = chartCanvas.dataset.lineLowess ? JSON.parse(chartCanvas.dataset.lineLowess) : []; 
+		lowessLine = chartCanvas.dataset.lineLowess ? JSON.parse(chartCanvas.dataset.lineLowess) : [];
+		scaledLine = chartCanvas.dataset.lineScaled ? JSON.parse(chartCanvas.dataset.lineScaled) : [];
 	} catch (e) {
-		console.error('Erreur de parsing des données du graphique :', e);
+		console.error('❌ Erreur de parsing JSON des données du graphique :', e);
 		return;
 	}
 
@@ -129,7 +134,8 @@ function initChartFromResults() {
 					borderWidth: 2,
 					fill: false,
 					pointRadius: 0
-					}
+				}
+
 			]
 		},
 		options: {

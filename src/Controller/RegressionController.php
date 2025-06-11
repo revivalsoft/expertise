@@ -66,6 +66,7 @@ class RegressionController extends AbstractController
                 'logarithmique' => $this->estimationLog($filteredSurface, $filteredPrix, $m2Value),
                 'puissance' => $this->estimationPower($filteredSurface, $filteredPrix, $m2Value),
                 'lowess' => $this->estimationLowess($filteredSurface, $filteredPrix, $m2Value),
+                
             ];
 
             $yHatLinear = [];
@@ -109,7 +110,11 @@ class RegressionController extends AbstractController
             ];
         }
 
+      
+
         $checkedIndexes = array_keys($filteredSurface);
+     
+
 
         $context = [
             'file' => $file,
@@ -129,6 +134,8 @@ class RegressionController extends AbstractController
                 'surface' => $filteredSurface,
                 'prix' => $filteredPrix,
             ],
+         
+           
         ];
 
         if ($request->isXmlHttpRequest()) {
@@ -235,6 +242,8 @@ class RegressionController extends AbstractController
     {
         return array_map(fn($xi) => $this->estimationLowess($x, $y, $xi), $x);
     }
+
+ 
 
 
 }
