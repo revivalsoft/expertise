@@ -66,7 +66,7 @@ class RegressionController extends AbstractController
                 'logarithmique' => $this->estimationLog($filteredSurface, $filteredPrix, $m2Value),
                 'puissance' => $this->estimationPower($filteredSurface, $filteredPrix, $m2Value),
                 'lowess' => $this->estimationLowess($filteredSurface, $filteredPrix, $m2Value),
-                
+
             ];
 
             $yHatLinear = [];
@@ -76,11 +76,10 @@ class RegressionController extends AbstractController
                 $yHatPower[] = $this->estimationPower($filteredSurface, $filteredPrix, $xi);
             }
 
-
             $logPred = $this->predictLog($filteredSurface, $filteredPrix, $filteredSurface);
 
             $lowessPred = $this->predictLowess($filteredSurface, $filteredPrix);
-      
+
             $scores = [
                 'r2_lineaire' => $this->rSquared($filteredPrix, $yHatLinear),
                 'rmse_lineaire' => $this->rmse($filteredPrix, $yHatLinear),
@@ -101,7 +100,6 @@ class RegressionController extends AbstractController
             $powerLine[] = ['x' => $xi, 'y' => $this->estimationPower($filteredSurface, $filteredPrix, $xi)];
         }
 
-
         $lowessLine = [];
         foreach ($filteredSurface as $xi) {
             $lowessLine[] = [
@@ -110,11 +108,7 @@ class RegressionController extends AbstractController
             ];
         }
 
-      
-
         $checkedIndexes = array_keys($filteredSurface);
-     
-
 
         $context = [
             'file' => $file,
@@ -134,8 +128,8 @@ class RegressionController extends AbstractController
                 'surface' => $filteredSurface,
                 'prix' => $filteredPrix,
             ],
-         
-           
+
+
         ];
 
         if ($request->isXmlHttpRequest()) {
@@ -150,31 +144,31 @@ class RegressionController extends AbstractController
         $n = count($x);
         $sumX = array_sum($x);
         $sumY = array_sum($y);
-        $sumXY = array_sum(array_map(fn ($xi, $yi) => $xi * $yi, $x, $y));
-        $sumX2 = array_sum(array_map(fn ($xi) => $xi ** 2, $x));
+        $sumXY = array_sum(array_map(fn($xi, $yi) => $xi * $yi, $x, $y));
+        $sumX2 = array_sum(array_map(fn($xi) => $xi ** 2, $x));
 
 
         $denominator = $n * $sumX2 - $sumX ** 2;
-            if ($denominator == 0) {
-                return 0; // ou null, selon ce que tu préfères
-            }
+        if ($denominator == 0) {
+            return 0; // ou null, selon ce que tu préfères
+        }
 
-            $slope = ($n * $sumXY - $sumX * $sumY) / $denominator;
-            $intercept = ($sumY - $slope * $sumX) / $n;
+        $slope = ($n * $sumXY - $sumX * $sumY) / $denominator;
+        $intercept = ($sumY - $slope * $sumX) / $n;
 
         return round($intercept + $slope * $xInput, 2);
     }
 
     private function estimationLog(array $x, array $y, float $xInput): float
     {
-        $xLog = array_map(fn ($v) => log($v), $x);
+        $xLog = array_map(fn($v) => log($v), $x);
         return $this->estimationLineaire($xLog, $y, log($xInput));
     }
 
     private function estimationPower(array $x, array $y, float $xInput): float
     {
-        $xLog = array_map(fn ($v) => log($v), $x);
-        $yLog = array_map(fn ($v) => log($v), $y);
+        $xLog = array_map(fn($v) => log($v), $x);
+        $yLog = array_map(fn($v) => log($v), $y);
         $logEstimate = $this->estimationLineaire($xLog, $yLog, log($xInput));
         return round(exp($logEstimate), 2);
     }
@@ -223,8 +217,8 @@ class RegressionController extends AbstractController
 
     private function predictLog(array $x, array $y, array $xInput): array
     {
-        $xLog = array_map(fn ($v) => log($v), $x);
-        $yLog = array_map(fn ($v) => log($v), $y);
+        $xLog = array_map(fn($v) => log($v), $x);
+        $yLog = array_map(fn($v) => log($v), $y);
 
         $n = count($xLog);
         $sumX = array_sum($xLog);
@@ -242,8 +236,4 @@ class RegressionController extends AbstractController
     {
         return array_map(fn($xi) => $this->estimationLowess($x, $y, $xi), $x);
     }
-
- 
-
-
 }

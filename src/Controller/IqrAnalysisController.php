@@ -90,7 +90,6 @@ public function index(Request $request): Response
                 'iqrFactor' => $iqrFactor,
                 'stdFactor' => $stdFactor,
                 'regressionOutliers' => $regressionOutliers,
-
             ];
         }
     }
