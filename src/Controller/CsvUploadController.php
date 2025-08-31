@@ -1,8 +1,25 @@
 <?php
+/*
+ * Estimations - Logiciel d'aide à l'estimation de terrains
+ * Copyright (C) 2025 RevivalSoft
+ *
+ * Ce programme est un logiciel libre ; vous pouvez le redistribuer et/ou
+ * le modifier selon les termes de la Licence Publique Générale GNU publiée
+ * par la Free Software Foundation Version 3.
+ *
+ * Ce programme est distribué dans l'espoir qu'il sera utile,
+ * mais SANS AUCUNE GARANTIE ; sans même la garantie implicite de
+ * COMMERCIALISATION ou D’ADÉQUATION À UN BUT PARTICULIER. Voir la
+ * Licence Publique Générale GNU pour plus de détails.
+ *
+ * Vous devriez avoir reçu une copie de la Licence Publique Générale GNU
+ * avec ce programme ; si ce n'est pas le cas, voir
+ * <https://www.gnu.org/licenses/>.
+ */
 
 namespace App\Controller;
 
-use App\Form\CsvUploadType; 
+use App\Form\CsvUploadType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +33,7 @@ class CsvUploadController extends AbstractController
     public function upload(Request $request): Response
     {
 
-        
+
         $form = $this->createForm(CsvUploadType::class);
         $form->handleRequest($request);
 
@@ -25,24 +42,24 @@ class CsvUploadController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $csvFile */
             $csvFile = $form->get('csv')->getData();
-       
-          
+
+
 
             if ($csvFile) {
                 $originalFilename = pathinfo($csvFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $extension = $csvFile->guessExtension() ?: 'csv';
                 $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename.'.'.$extension;
+                $newFilename = $safeFilename . '.' . $extension;
 
-                $uploadDir = $this->getParameter('kernel.project_dir').'/public/uploads';
+                $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads';
 
                 // Empêche le doublon
-                if (file_exists($uploadDir.'/'.$newFilename)) {
+                if (file_exists($uploadDir . '/' . $newFilename)) {
                     $message = '❌ Le fichier existe déjà. Veuillez renommer votre fichier ou en choisir un autre.';
                 } else {
                     try {
                         $csvFile->move($uploadDir, $newFilename);
-                        $message = '✅ Fichier uploadé avec succès : '.$newFilename;
+                        $message = '✅ Fichier uploadé avec succès : ' . $newFilename;
                     } catch (FileException $e) {
                         $message = '❌ Une erreur est survenue lors du téléchargement.';
                     }
@@ -51,14 +68,14 @@ class CsvUploadController extends AbstractController
         }
 
         // Récupère la liste des fichiers existants
-        $csvFiles = glob($this->getParameter('kernel.project_dir').'/public/uploads/*.csv');
+        $csvFiles = glob($this->getParameter('kernel.project_dir') . '/public/uploads/*.csv');
         $csvFiles = array_map('basename', $csvFiles);
 
         return $this->render('csv_upload/index.html.twig', [
             'form' => $form->createView(),
             'csvFiles' => $csvFiles,
             'message' => $message,
-                      
+
         ]);
     }
 
