@@ -31,9 +31,16 @@ L’objectif est d’obtenir une **fourchette de prix estimative** pour un terra
 
 ---
 
+
+## 📜 Licence
+
+Projet open-source sous licence GNU GPL v3.
+
+---
+
 ## 🚀 Installation (exemple)
 
-1. **Cloner le dépôt**  
+**Cloner le dépôt**  
 ```bash
 git clone https://github.com/revivalsoft/expertise.git
 cd expertise
