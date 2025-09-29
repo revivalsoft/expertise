@@ -38,8 +38,8 @@
 						<h3 class="h5">Principe</h3>
 						<p>
 							Cet outil permet d’estimer la valeur d’un terrain constructible en exploitant des données issues de parcelles comparables
-																																																																																																																																					(superficie, prix total) que vous fournissez sous forme de fichier CSV.
-																																																																																																																																					Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
+																																																																																																																																																																																																											(superficie, prix total) que vous fournissez sous forme de fichier CSV.
+																																																																																																																																																																																																											Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
 						</p>
 
 						<h3 class="h5 mt-4">Données attendues</h3>
@@ -85,21 +85,83 @@
 						</p>
 
 
-						<div class="card text-center shadow-sm" style="max-width: 400px; margin: auto;">
-							<div class="card-body">
-								<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" style="width: 40px; height: 40px; margin-bottom: 10px;">
+						<div
+							class="row justify-content-center g-4">
+							<!-- Card GitHub -->
+							<div class="col-12 col-md-6 col-lg-4">
+								<div class="card text-center shadow-sm h-100" style="border-top: 4px solid #24292f;">
+									<div class="card-body">
+										<span class="badge bg-dark mb-2">GitHub</span>
+										<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" style="width: 40px; height: 40px; margin-bottom: 10px;">
+										<h5 class="card-title">Code source disponible</h5>
+										<p class="card-text">
+											Retrouvez ce projet directement sur GitHub.
+										</p>
+										<a href="https://github.com/revivalsoft/expertise" target="_blank" rel="noopener noreferrer" class="btn btn-dark">
+											<i class="bi bi-github"></i>
+											Voir sur GitHub
+										</a>
+									</div>
+								</div>
+							</div>
 
-								<h5 class="card-title">Code source disponible</h5>
-								<p class="card-text">
-									Retrouvez ce projet directement sur GitHub.
-								</p>
+							<!-- Card Docker -->
+							<div class="col-12 col-md-6 col-lg-4">
+								<div class="card text-center shadow-sm h-100" style="border-top: 4px solid #2496ed;">
+									<div class="card-body">
+										<span class="badge bg-primary mb-2">Docker</span>
+										<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" style="width: 40px; height: 40px; margin-bottom: 10px;">
+										<h5 class="card-title">Image Docker disponible</h5>
+										<p class="card-text">
+											Téléchargez et lancez facilement ce projet avec Docker.
+										</p>
+										<p>
+											<a href="https://hub.docker.com/r/revivalsoft/terraestimate" target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-2">
+												<i class="bi bi-box-arrow-up-right"></i>
+												Voir sur Docker Hub
+											</a>
+										</p>
 
-								<a href="https://github.com/revivalsoft/expertise" target="_blank" rel="noopener noreferrer" class="btn btn-dark">
-									<i class="bi bi-github"></i>
-									Voir sur GitHub
-								</a>
+										<div class="text-start" style="font-size: 0.9rem; word-break: break-word;">
+											<div class="mb-2">
+												<strong>1️⃣ Créer le volume pour les uploads :</strong><br>
+												<code id="cmd1">docker volume create terrauploads</code>
+												<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="cmd1">Copier</button>
+											</div>
+
+											<div class="mb-2">
+												<strong>2️⃣ Lancer le conteneur :</strong><br>
+												<code id="cmd2">docker run -d -p 8082:80 --name terraestimate -v terrauploads:/var/www/html/public/uploads revivalsoft/terraestimate:latest</code>
+												<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="cmd2">Copier</button>
+											</div>
+										</div>
+
+										{# <a href="https://hub.docker.com/r/revivalsoft/terraestimate" target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-2">
+																															<i class="bi bi-box-arrow-up-right"></i>
+																															Voir sur Docker Hub
+																														</a> #}
+									</div>
+								</div>
 							</div>
 						</div>
+
+						<script>
+							document.querySelectorAll('.copy-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+const targetId = btn.getAttribute('data-target');
+const text = document.getElementById(targetId).innerText;
+navigator.clipboard.writeText(text).then(() => {
+const original = btn.innerText;
+btn.innerText = 'Copié !';
+btn.disabled = true;
+setTimeout(() => {
+btn.innerText = original;
+btn.disabled = false;
+}, 2000);
+});
+});
+});
+						</script>
 
 
 						<div class="text-center mt-4">
