@@ -38,8 +38,8 @@
 						<h3 class="h5">Principe</h3>
 						<p>
 							Cet outil permet d’estimer la valeur d’un terrain constructible en exploitant des données issues de parcelles comparables
-																																																																																																																																																																																																											(superficie, prix total) que vous fournissez sous forme de fichier CSV.
-																																																																																																																																																																																																											Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
+																												(superficie, prix total) que vous fournissez sous forme de fichier CSV.
+																												Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
 						</p>
 
 						<h3 class="h5 mt-4">Données attendues</h3>
@@ -83,7 +83,6 @@
 						<p class="mt-3">
 							Ces différentes approches sont calculées en parallèle, affichées et comparées pour fournir une estimation fiable.
 						</p>
-
 
 						<div
 							class="row justify-content-center g-4">
@@ -136,10 +135,38 @@
 											</div>
 										</div>
 
-										{# <a href="https://hub.docker.com/r/revivalsoft/terraestimate" target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-2">
-																															<i class="bi bi-box-arrow-up-right"></i>
-																															Voir sur Docker Hub
-																														</a> #}
+										<!-- Bloc Sécurité -->
+										<div class="alert alert-warning mt-3 text-start" style="font-size: 0.9rem;">
+											<h6 class="fw-bold">ℹ️ Sécurité et mises à jour</h6>
+											<p>
+												Cette image Docker est basée sur une distribution Debian/Ubuntu et peut contenir des vulnérabilités
+																																																découvertes au fil du temps. L’application reste utilisable, mais vous pouvez renforcer la sécurité
+																																																en reconstruisant localement l’image avec les correctifs les plus récents.
+											</p>
+											<ol>
+												<li>Téléchargez l’image depuis Docker Hub :
+													<br><code id="pull">docker pull revivalsoft/terraestimate:latest</code>
+													<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="pull">Copier</button>
+												</li>
+												<li>Créez un fichier
+													<code>Dockerfile</code>
+													contenant :
+													<pre><code id="dockerfile">FROM revivalsoft/terraestimate:latest
+RUN apt-get update && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*</code></pre>
+													<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="dockerfile">Copier</button>
+												</li>
+												<li>Rebuild l’image corrigée :
+													<br><code id="rebuild">docker build -t terraestimate:secure .</code>
+													<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="rebuild">Copier</button>
+												</li>
+											</ol>
+											<p class="mb-0">
+												👉 Vous pouvez aussi analyser l’image avec un outil comme
+												<a href="https://aquasecurity.github.io/trivy/" target="_blank" rel="noopener noreferrer">Trivy</a>
+												avant et après rebuild pour vérifier l’état de sécurité.
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -162,7 +189,6 @@ btn.disabled = false;
 });
 });
 						</script>
-
 
 						<div class="text-center mt-4">
 							<a href="{{ path('csv_upload') }}" class="btn btn-primary btn-lg">Accéder à l’outil</a>
