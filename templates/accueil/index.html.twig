@@ -8,7 +8,7 @@
   
   Ce programme est distribué dans l'espoir qu'il sera utile,
   mais SANS AUCUNE GARANTIE ; sans même la garantie implicite de
-  COMMERCIALISATION ou D’ADÉQUATION À UN BUT PARTICULIER. Voir la
+  COMMERCIALISATION ou D'ADÉQUATION À UN BUT PARTICULIER. Voir la
   Licence Publique Générale GNU pour plus de détails.
   
   Vous devriez avoir reçu une copie de la Licence Publique Générale GNU
@@ -17,7 +17,7 @@
 #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Outil d’estimation foncière
+{% block title %}Outil d'estimation foncière
 {% endblock %}
 
 {% block body %}
@@ -26,7 +26,7 @@
 
 		<!-- En-tête -->
 		<div class="mb-5 text-center">
-			<h1 class="display-4">Outil d’estimation de terrains constructibles</h1>
+			<h1 class="display-4">Outil d'estimation de terrains constructibles</h1>
 			<p class="lead">Analyse quantitative à partir de données environnementales fournies au format CSV.</p>
 		</div>
 
@@ -39,14 +39,14 @@
 				</a>
 			</div>
 
-		<!-- Présentation de l’outil -->
+		<!-- Présentation de l'outil -->
 		<div class="row mb-5">
 			<div class="col-md-8 offset-md-2">
 				<div class="card shadow-sm">
 					<div class="card-body">
 						<h3 class="h5">Principe</h3>
 						<p>
-							Cet outil permet d’estimer la valeur d’un terrain constructible en exploitant des données issues de parcelles comparables
+							Cet outil permet d'estimer la valeur d'un terrain constructible en exploitant des données issues de parcelles comparables
 																												(superficie, prix total) que vous fournissez sous forme de fichier CSV.
 																												Le système applique plusieurs méthodes de calcul pour proposer une estimation cohérente et fiable.
 						</p>
@@ -69,7 +69,7 @@
 							<li>Enfin, indiquer la surface en m2 du terrain à évaluer.</li>
 						</ul>
 
-						<h3 class="h5 mt-4">Méthodes d’estimation proposées</h3>
+						<h3 class="h5 mt-4">Méthodes d'estimation proposées</h3>
 						<ul>
 							<li>
 								<strong>Régression linéaire (<a href="{{ path('app_regression_lineaire_info') }}">voir explication</a>)</strong>
@@ -93,15 +93,18 @@
 							Ces différentes approches sont calculées en parallèle, affichées et comparées pour fournir une estimation fiable.
 						</p>
 
-						<div
-							class="row justify-content-center g-4">
+						<div class="row justify-content-center g-4">
 							<!-- Card GitHub -->
-							<div class="col-12 col-md-6 col-lg-4">
-								<div class="card text-center shadow-sm h-100" style="border-top: 4px solid #24292f;">
+							<div class="col-12">
+								<div class="card shadow-sm" style="border-top: 4px solid #24292f;">
 									<div class="card-body">
-										<span class="badge bg-dark mb-2">GitHub</span>
-										<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" style="width: 40px; height: 40px; margin-bottom: 10px;">
-										<h5 class="card-title">Code source disponible</h5>
+										<div class="d-flex align-items-center mb-3">
+											<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub" style="width: 40px; height: 40px; margin-right: 15px;">
+											<div>
+												<span class="badge bg-dark mb-1">GitHub</span>
+												<h5 class="card-title mb-0">Code source disponible</h5>
+											</div>
+										</div>
 										<p class="card-text">
 											Retrouvez ce projet directement sur GitHub.
 										</p>
@@ -114,66 +117,79 @@
 							</div>
 
 							<!-- Card Docker -->
-							<div class="col-12 col-md-6 col-lg-4">
-								<div class="card text-center shadow-sm h-100" style="border-top: 4px solid #2496ed;">
+							<div class="col-12">
+								<div class="card shadow-sm" style="border-top: 4px solid #2496ed;">
 									<div class="card-body">
-										<span class="badge bg-primary mb-2">Docker</span>
-										<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" style="width: 40px; height: 40px; margin-bottom: 10px;">
-										<h5 class="card-title">Image Docker disponible</h5>
+										<div class="d-flex align-items-center mb-3">
+											<img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" style="width: 40px; height: 40px; margin-right: 15px;">
+											<div>
+												<span class="badge bg-primary mb-1">Docker</span>
+												<h5 class="card-title mb-0">Image Docker disponible</h5>
+											</div>
+										</div>
 										<p class="card-text">
 											Téléchargez et lancez facilement ce projet avec Docker.
 										</p>
-										<p>
-											<a href="https://hub.docker.com/r/revivalsoft/terraestimate" target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-2">
-												<i class="bi bi-box-arrow-up-right"></i>
-												Voir sur Docker Hub
-											</a>
-										</p>
+										<a href="https://hub.docker.com/r/revivalsoft/terraestimate" target="_blank" rel="noopener noreferrer" class="btn btn-primary mb-3">
+											<i class="bi bi-box-arrow-up-right"></i>
+											Voir sur Docker Hub
+										</a>
 
-										<div class="text-start" style="font-size: 0.9rem; word-break: break-word;">
-											<div class="mb-2">
-												<strong>1️⃣ Créer le volume pour les uploads :</strong><br>
-												<code id="cmd1">docker volume create terrauploads</code>
-												<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="cmd1">Copier</button>
+										<div class="text-start" style="font-size: 0.9rem;">
+											<div class="mb-3">
+												<strong>1️⃣ Créer le volume pour les uploads :</strong>
+												<div class="d-flex align-items-center mt-1">
+													<code class="flex-grow-1" id="cmd1" style="white-space: nowrap; overflow-x: auto;">docker volume create terrauploads</code>
+													<button class="btn btn-sm btn-outline-secondary ms-2 copy-btn" data-target="cmd1">Copier</button>
+												</div>
 											</div>
 
-											<div class="mb-2">
-												<strong>2️⃣ Lancer le conteneur :</strong><br>
-												<code id="cmd2">docker run -d -p 8082:80 --name terraestimate -v terrauploads:/var/www/html/public/uploads revivalsoft/terraestimate:latest</code>
-												<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="cmd2">Copier</button>
+											<div class="mb-3">
+												<strong>2️⃣ Lancer le conteneur :</strong>
+												<div class="d-flex align-items-center mt-1">
+													<code class="flex-grow-1" id="cmd2" style="white-space: nowrap; overflow-x: auto;">docker run -d -p 8082:80 --name terraestimate -v terrauploads:/var/www/html/public/uploads revivalsoft/terraestimate:latest</code>
+													<button class="btn btn-sm btn-outline-secondary ms-2 copy-btn" data-target="cmd2">Copier</button>
+												</div>
 											</div>
 										</div>
 
 										<!-- Bloc Sécurité -->
-										<div class="alert alert-warning mt-3 text-start" style="font-size: 0.9rem;">
+										<div class="alert alert-warning mt-3" style="font-size: 0.9rem;">
 											<h6 class="fw-bold">ℹ️ Sécurité et mises à jour</h6>
 											<p>
 												Cette image Docker est basée sur une distribution Debian/Ubuntu et peut contenir des vulnérabilités
-																																																découvertes au fil du temps. L’application reste utilisable, mais vous pouvez renforcer la sécurité
-																																																en reconstruisant localement l’image avec les correctifs les plus récents.
+												découvertes au fil du temps. L'application reste utilisable, mais vous pouvez renforcer la sécurité
+												en reconstruisant localement l'image avec les correctifs les plus récents.
 											</p>
 											<ol>
-												<li>Téléchargez l’image depuis Docker Hub :
-													<br><code id="pull">docker pull revivalsoft/terraestimate:latest</code>
-													<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="pull">Copier</button>
+												<li class="mb-2">
+													Téléchargez l'image depuis Docker Hub :
+													<div class="d-flex align-items-center mt-1">
+														<code class="flex-grow-1" id="pull" style="white-space: nowrap; overflow-x: auto;">docker pull revivalsoft/terraestimate:latest</code>
+														<button class="btn btn-sm btn-outline-secondary ms-2 copy-btn" data-target="pull">Copier</button>
+													</div>
 												</li>
-												<li>Créez un fichier
-													<code>Dockerfile</code>
-													contenant :
-													<pre><code id="dockerfile">FROM revivalsoft/terraestimate:latest
+												<li class="mb-2">
+													Créez un fichier <code>Dockerfile</code> contenant :
+													<div class="position-relative mt-1">
+														<pre class="bg-light p-2 rounded"><code id="dockerfile">FROM revivalsoft/terraestimate:latest
 RUN apt-get update && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*</code></pre>
-													<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="dockerfile">Copier</button>
+														<button class="btn btn-sm btn-outline-secondary copy-btn position-absolute top-0 end-0 m-2" data-target="dockerfile">Copier</button>
+													</div>
 												</li>
-												<li>Rebuild l’image corrigée :
-													<br><code id="rebuild">docker build -t terraestimate:secure .</code>
-													<button class="btn btn-sm btn-outline-secondary ms-1 copy-btn" data-target="rebuild">Copier</button>
+												<li class="mb-2">
+													Rebuild l'image corrigée :
+													<div class="d-flex align-items-center mt-1">
+														<code class="flex-grow-1" id="rebuild" style="white-space: nowrap; overflow-x: auto;">docker build -t terraestimate:secure .</code>
+														<button class="btn btn-sm btn-outline-secondary ms-2 copy-btn" data-target="rebuild">Copier</button>
+													</div>
 												</li>
 											</ol>
 											<p class="mb-0">
-												👉 Vous pouvez aussi analyser l’image avec un outil comme
+												👉 Vous pouvez aussi analyser l'image avec un outil comme
 												<a href="https://aquasecurity.github.io/trivy/" target="_blank" rel="noopener noreferrer">Trivy</a>
-												avant et après rebuild pour vérifier l’état de sécurité.
+												avant et après rebuild pour vérifier l'état de sécurité.
 											</p>
 										</div>
 									</div>
@@ -200,7 +216,7 @@ btn.disabled = false;
 						</script>
 
 						<div class="text-center mt-4">
-							<a href="{{ path('csv_upload') }}" class="btn btn-primary btn-lg">Accéder à l’outil</a>
+							<a href="{{ path('csv_upload') }}" class="btn btn-primary btn-lg">Accéder à l'outil</a>
 						</div>
 					</div>
 				</div>
@@ -228,7 +244,7 @@ btn.disabled = false;
 281,12926
 647,85404
 483,95151</code></pre>
-					<p>Assurez-vous d’enregistrer le fichier avec l'extension
+					<p>Assurez-vous d'enregistrer le fichier avec l'extension
 						<code>.csv</code>
 						et d'utiliser la
 						<code>virgule</code>
